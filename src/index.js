@@ -3,7 +3,7 @@ import { createStore } from 'redux';
 import React from 'react';
 import ReactDOM from 'react-dom';
 
-import App from './App';
+import App from './components/App';
 import murker from './reducers/index';
 import { createdWebGLContext } from './actions/index';
 import './index.css';

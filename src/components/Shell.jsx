@@ -2,7 +2,7 @@
 
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { createdWebGLContext } from './actions/index';
+import { createdWebGLContext } from '../actions/index';
 
 class BaseShell extends Component {
   componentDidMount() {
