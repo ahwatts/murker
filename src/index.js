@@ -9,7 +9,15 @@ import { createdWebGLContext } from './actions/index';
 import './index.css';
 
 const store = createStore(murker, {
+  // State values.
   gl: null,
+  glOptions: {
+    clearColor: [0.0, 0.0, 0.0, 1.0],
+    enable: ['DEPTH_TEST'],
+  },
+  sceneGraph: [],
+
+  // Action creators.
   createdWebGLContext,
 });
 
