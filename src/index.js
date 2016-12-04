@@ -1,3 +1,4 @@
+import Immutable from 'immutable';
 import { Provider } from 'react-redux';
 import { createStore } from 'redux';
 import React from 'react';
@@ -15,7 +16,7 @@ const store = createStore(murker, {
     clearColor: [0.0, 0.0, 0.0, 1.0],
     enable: ['DEPTH_TEST'],
   },
-  sceneGraph: [],
+  sceneGraph: Immutable.List([]),
 
   // Action creators.
   createdWebGLContext,

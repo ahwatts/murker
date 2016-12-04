@@ -1,3 +1,4 @@
+import Immutable from 'immutable';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
@@ -12,7 +13,7 @@ class BaseScene extends Component {
 }
 
 BaseScene.propTypes = {
-  sceneGraph: React.PropTypes.arrayOf(value => value.renderGL !== undefined),
+  sceneGraph: React.PropTypes.instanceOf(Immutable.List),
 };
 
 function mapStateToProps(state) {
