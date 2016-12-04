@@ -1,6 +1,8 @@
 import React from 'react';
 import Scene from './Scene';
 import Shell from './Shell';
+import Camera from '../gfx/camera';
+import Geometry from '../gfx/geometry';
 import './App.css';
 
 function App() {

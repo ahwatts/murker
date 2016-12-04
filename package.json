@@ -9,6 +9,7 @@
   "dependencies": {
     "gl-matrix": "^2.3.2",
     "immutable": "^3.8.1",
+    "ramda": "^0.22.1",
     "react": "^15.4.1",
     "react-dom": "^15.4.1",
     "react-redux": "^4.4.6",
