@@ -6,6 +6,11 @@ import { createdWebGLContext } from '../actions/index';
 
 class BaseShell extends Component {
   componentDidMount() {
+    const width = document.documentElement.clientWidth - 5;
+    const height = document.documentElement.clientHeight - 5;
+    this.canvas.width = width;
+    this.canvas.height = height;
+
     const gl = this.canvas.getContext('webgl') || this.canvas.getContext('experimental-webgl');
 
     if (this.props.glOptions.clearColor !== undefined) {
