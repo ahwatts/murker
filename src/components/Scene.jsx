@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import Camera from '../gfx/camera';
 
 class BaseScene extends Component {
   renderGL() {
