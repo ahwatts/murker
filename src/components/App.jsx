@@ -1,16 +1,15 @@
 import React from 'react';
-import Scene from './Scene';
+import Loader from './Loader';
 import Shell from './Shell';
-import Camera from '../gfx/camera';
-import Geometry from '../gfx/geometry';
-import Program from '../gfx/program';
 import './App.css';
 
 function App() {
   return (
-    <Shell>
-      <Scene />
-    </Shell>
+    <div className="App">
+      <Shell>
+        <Loader />
+      </Shell>
+    </div>
   );
 }
 

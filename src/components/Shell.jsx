@@ -6,8 +6,8 @@ import { createdWebGLContext } from '../actions/index';
 
 class BaseShell extends Component {
   componentDidMount() {
-    const width = document.documentElement.clientWidth - 5;
-    const height = document.documentElement.clientHeight - 5;
+    const width = document.documentElement.clientWidth;
+    const height = document.documentElement.clientHeight;
     this.canvas.width = width;
     this.canvas.height = height;
 
