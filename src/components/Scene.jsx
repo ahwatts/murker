@@ -1,12 +1,11 @@
 import Immutable from 'immutable';
+import R from 'ramda';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
 class BaseScene extends Component {
   renderGL() {
-    for (let i = 0; i < this.props.sceneGraph.length; i += 1) {
-      this.props.sceneGraph[i].renderGL();
-    }
+    R.forEach(sceneObject => sceneObject.renderGL(), this.props.sceneGraph);
   }
 
   render() { return null; }

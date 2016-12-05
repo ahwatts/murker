@@ -1,5 +1,6 @@
 /* eslint react/prop-types: off, react/no-unused-prop-types: off, no-bitwise: off */
 
+import R from 'ramda';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { createdWebGLContext } from '../actions/index';
@@ -18,9 +19,7 @@ class BaseShell extends Component {
     }
 
     if (this.props.glOptions.enable !== undefined) {
-      for (let i = 0; i < this.props.glOptions.enable.length; i += 1) {
-        gl.enable(gl[this.props.glOptions.enable[i]]);
-      }
+      R.forEach(opt => gl.enable(gl[opt]), this.props.glOptions.enable);
     }
 
     this.props.createdWebGLContext(gl);
@@ -35,12 +34,13 @@ class BaseShell extends Component {
     const gl = this.props.gl;
     gl.clear(gl.DEPTH_BUFFER_BIT | gl.COLOR_BUFFER_BIT);
     if (this.props.children !== undefined) {
-      for (let i = 0; i < this.props.children.length; i += 1) {
-        if (this.props.children[i].renderGL !== undefined) {
-          this.props.children[i].renderGL();
+      R.forEach((child) => {
+        if (child.renderGL !== undefined) {
+          child.renderGL();
         }
-      }
+      }, this.props.children);
     }
+
     this.animationId = requestAnimationFrame(() => { this.renderGL(); });
   }
 
@@ -55,6 +55,7 @@ class BaseShell extends Component {
 }
 
 BaseShell.propTypes = {
+  gl: React.PropTypes.instanceOf(WebGLRenderingContext),
   createdWebGlContext: React.PropTypes.func,
 };
 
