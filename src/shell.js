@@ -1,4 +1,6 @@
 import { EventEmitter } from "events";
+import { createdWebGLContext } from "./actions";
+import store from "./store";
 
 class Shell {
   constructor(canvas) {
@@ -26,12 +28,11 @@ class Shell {
     this.resized = false;
 
     this.setCanvasSize();
-
     window.addEventListener("resize", () => {
       self.resized = true;
     });
 
-    this.events.emit("gl-init", this);
+    store.dispatch(createdWebGLContext(this.gl));
   }
 
   setCanvasSize() {
