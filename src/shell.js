@@ -33,6 +33,7 @@ class Shell {
     });
 
     store.dispatch(createdWebGLContext(this.gl));
+    this.events.emit("gl-init", this);
   }
 
   setCanvasSize() {

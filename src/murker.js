@@ -1,23 +1,27 @@
 /* eslint no-bitwise: off */
 
+import Program from "./program";
 import Shell from "./shell";
-import store from "./store";
 import "./murker.css";
+import unlitVertexSrc from "./shaders/unlit.vert";
+import unlitFragmentSrc from "./shaders/unlit.frag";
 
 let gl = null;
 const shell = new Shell(document.querySelector("canvas#murker"));
 
-store.subscribe(() => {
-  const oldGl = gl;
-  gl = store.getState().get("gl");
+shell.events.on("gl-init", () => {
+  gl = shell.gl;
+  gl.clearColor(0.0, 0.0, 0.0, 1.0);
+  gl.enable(gl.DEPTH_TEST);
+  shell.startRendering();
+  shell.startUpdating();
 
-  if (gl !== oldGl) {
-    gl.clearColor(0.0, 0.0, 0.0, 1.0);
-    gl.enable(gl.DEPTH_TEST);
-
-    shell.startRendering();
-    shell.startUpdating();
-  }
+  const unlitProg = new Program({
+    gl,
+    vertexSource: unlitVertexSrc,
+    fragmentSource: unlitFragmentSrc,
+  });
+  console.log(unlitProg);
 });
 
 shell.events.on("render", () => {

@@ -20,6 +20,11 @@ const config = {
         exclude: /node_modules/,
         loader: "style!css",
       },
+      {
+        test: /\.(glsl|vert|frag)$/,
+        exclode: /node_modules/,
+        loader: "webpack-glsl",
+      },
     ],
   },
   devtool: "sourcemap",

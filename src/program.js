@@ -32,8 +32,9 @@ class Program {
     this.gl = gl;
 
     this.program = createProgram(
-      createShader(gl.VERTEX_SHADER, vertexSource),
-      createShader(gl.FRAGMENT_SHADER, fragmentSource),
+      gl,
+      createShader(gl, gl.VERTEX_SHADER, vertexSource),
+      createShader(gl, gl.FRAGMENT_SHADER, fragmentSource),
     );
 
     this.attributes = {};
