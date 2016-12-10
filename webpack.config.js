@@ -1,9 +1,12 @@
 const config = {
-  entry: "./src/murker.js",
+  entry: {
+    murker: "./src/murker.js",
+    murkerTest: "./test/murker.js",
+  },
   output: {
     path: "./dist",
     publicPath: "/assets/",
-    filename: "murker.js",
+    filename: "[name].js",
   },
   module: {
     loaders: [
@@ -22,7 +25,7 @@ const config = {
       },
       {
         test: /\.(glsl|vert|frag)$/,
-        exclode: /node_modules/,
+        exclude: /node_modules/,
         loader: "webpack-glsl",
       },
     ],

@@ -1,3 +1,5 @@
+/* eslint key-spacing: off */
+
 import R from "ramda";
 
 const PLY_ATTRIBUTES = [
@@ -10,11 +12,11 @@ const PLY_ATTRIBUTES_BY_NAME = R.indexBy(a => a.name, PLY_ATTRIBUTES);
 
 function describeAttrib(vertex, possibleFields) {
   const attrib = { count: 0 };
-  R.forEach(possibleFields, (f) => {
+  R.forEach((f) => {
     if (vertex[f] !== undefined) {
       attrib.count += 1;
     }
-  });
+  }, possibleFields);
   return attrib;
 }
 
@@ -24,14 +26,14 @@ function describeVertex(vertex) {
     stride: 0,
   };
 
-  R.forEach(PLY_ATTRIBUTES, (attrib) => {
+  R.forEach((attrib) => {
     const attribDesc = describeAttrib(vertex, attrib.possibleKeys);
     if (attribDesc.count > 0) {
       attribDesc.float_offset = R.reduce((m, a) => m + a.count, 0, description.attribs);
       attribDesc.offset = attribDesc.float_offset * Float32Array.BYTES_PER_ELEMENT;
       description.attribs[attrib.name] = attribDesc;
     }
-  });
+  }, PLY_ATTRIBUTES);
 
   description.float_stride = R.reduce((m, a) => m + a.count, 0, description.attribs);
   description.stride = description.float_stride * Float32Array.BYTES_PER_ELEMENT;
@@ -165,6 +167,31 @@ class Geometry {
 
     this.vertexBuffer = null;
     this.elementBuffer = null;
+  }
+
+  static octohedron({ gl }) {
+    const octohedronPolyData = {
+      vertex: [
+        { x:  1.0, y:  0.0, z:  0.0, red: 1.0, green: 0.0, blue: 0.0, alpha: 1.0 },
+        { x: -1.0, y:  0.0, z:  0.0, red: 1.0, green: 0.0, blue: 0.0, alpha: 1.0 },
+        { x:  0.0, y:  0.0, z:  1.0, red: 0.0, green: 0.0, blue: 1.0, alpha: 1.0 },
+        { x:  0.0, y:  0.0, z: -1.0, red: 0.0, green: 0.0, blue: 1.0, alpha: 1.0 },
+        { x:  0.0, y: -1.0, z:  0.0, red: 0.0, green: 1.0, blue: 0.0, alpha: 1.0 },
+        { x:  0.0, y:  1.0, z:  0.0, red: 0.0, green: 1.0, blue: 0.0, alpha: 1.0 },
+      ],
+      face: [
+        [4, 0, 2],
+        [4, 3, 0],
+        [4, 1, 3],
+        [4, 2, 1],
+        [5, 2, 0],
+        [5, 0, 3],
+        [5, 3, 1],
+        [5, 1, 2],
+      ],
+    };
+
+    return new Geometry({ gl, polyData: octohedronPolyData });
   }
 }
 
