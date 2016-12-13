@@ -3,6 +3,9 @@
    no-unused-expressions, import/no-extraneous-dependencies,
    key-spacing */
 
+import testVertexShaderSource from "./shaders/test.vert";
+import testFragmentShaderSource from "./shaders/test.frag";
+
 export function manageLifetime({ create, destroy, cleanup }) {
   beforeEach(create);
 
@@ -34,6 +37,11 @@ export const octohedronPolyData = {
     [5, 3, 1],
     [5, 1, 2],
   ],
+};
+
+export const testShaderSource = {
+  vertexSource: testVertexShaderSource,
+  fragmentSource: testFragmentShaderSource,
 };
 
 export default {};

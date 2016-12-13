@@ -5,8 +5,13 @@
 import { expect } from "chai";
 import R from "ramda";
 import Geometry from "../src/geometry";
+import Program from "../src/program";
 import WebGLContext from "./webgl_fixture";
-import { manageLifetime, octohedronPolyData } from "./test_utils";
+import {
+  manageLifetime,
+  octohedronPolyData,
+  testShaderSource,
+} from "./test_utils";
 
 describe("With a valid WebGL Context", function () {
   let gl = null;
@@ -208,6 +213,128 @@ describe("With a valid WebGL Context", function () {
         expect(gl.getBufferParameter(gl.ELEMENT_ARRAY_BUFFER, gl.BUFFER_SIZE))
           .to.equal(fixture.elements.length * Uint16Array.BYTES_PER_ELEMENT);
         gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, null);
+      });
+    });
+
+    describe("destroy", function () {
+      let fixture = null;
+
+      manageLifetime({
+        create: () => {
+          expect(fixture).to.be.null;
+          fixture = new Geometry({ gl, polyData: octohedronPolyData });
+          fixture.createBuffers();
+        },
+        destroy: () => {
+          if (fixture !== null) {
+            expect(fixture).to.respondTo("destroy");
+            fixture.destroy();
+          }
+        },
+        cleanup: () => {
+          fixture = null;
+        },
+      });
+
+      it("should invalidate the vertex buffer", function () {
+        const buf = fixture.vertexBuffer;
+        expect(gl.isBuffer(buf)).to.be.true;
+        fixture.destroy();
+        expect(gl.isBuffer(buf)).to.be.false;
+      });
+
+      it("should invalidate the element buffer", function () {
+        const buf = fixture.elementBuffer;
+        expect(gl.isBuffer(buf)).to.be.true;
+        fixture.destroy();
+        expect(gl.isBuffer(buf)).to.be.false;
+      });
+    });
+
+    describe("render", function () {
+      let fixture = null;
+      let program = null;
+
+      manageLifetime({
+        create: () => {
+          expect(fixture).to.be.null;
+          fixture = new Geometry({ gl, polyData: octohedronPolyData });
+          fixture.createBuffers();
+        },
+        destroy: () => {
+          if (fixture !== null) {
+            expect(fixture).to.respondTo("destroy");
+            fixture.destroy();
+          }
+        },
+        cleanup: () => {
+          fixture = null;
+        },
+      });
+
+      manageLifetime({
+        create: () => {
+          expect(program).to.be.null;
+          program = new Program(R.merge({ gl }, testShaderSource));
+        },
+        destroy: () => {
+          if (program !== null) {
+            expect(program).to.respondTo("destroy");
+            program.destroy();
+          }
+        },
+        cleanup: () => {
+          program = null;
+        },
+      });
+
+      describe("bindBuffers", function () {
+        it("should bind the buffers", function () {
+          fixture.bindBuffers();
+          expect(gl.getParameter(gl.ARRAY_BUFFER_BINDING)).to.equal(fixture.vertexBuffer);
+          expect(gl.getParameter(gl.ELEMENT_ARRAY_BUFFER_BINDING)).to.equal(fixture.elementBuffer);
+        });
+      });
+
+      describe("unbindBuffers", function () {
+        it("should un-bind the buffers", function () {
+          gl.bindBuffer(gl.ARRAY_BUFFER, fixture.vertexBuffer);
+          gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, fixture.elementBuffer);
+          fixture.unbindBuffers();
+          expect(gl.getParameter(gl.ARRAY_BUFFER_BINDING)).to.be.null;
+          expect(gl.getParameter(gl.ELEMENT_ARRAY_BUFFER_BINDING)).to.be.null;
+        });
+      });
+
+      describe("setUpAttributes", function () {
+        beforeEach(function () {
+          expect(program).to.not.be.null;
+          gl.useProgram(program.program);
+        });
+
+        afterEach(function () {
+          gl.useProgram(null);
+        });
+
+        it("should set up the attributes", function () {
+          fixture.setUpAttributes(program);
+          const attrInfo = gl.getActiveAttrib(program.program, program.attributes.position);
+          expect(attrInfo).to.exist;
+          expect(attrInfo.size).to.equal(1);
+          expect(attrInfo.type).to.equal(gl.FLOAT_VEC3);
+          expect(attrInfo.name).to.equal("position");
+        });
+      });
+
+      it("should not throw an error", function () {
+        fixture.render(program);
+      });
+
+      it("should clean up after itself", function () {
+        fixture.render(program);
+        expect(gl.getParameter(gl.CURRENT_PROGRAM)).to.be.null;
+        expect(gl.getParameter(gl.ARRAY_BUFFER_BINDING)).to.be.null;
+        expect(gl.getParameter(gl.ELEMENT_ARRAY_BUFFER_BINDING)).to.be.null;
       });
     });
   });

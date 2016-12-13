@@ -36,6 +36,11 @@ module.exports = function (config) {
               presets: ["es2015"],
             },
           },
+          {
+            test: /\.(glsl|vert|frag)$/,
+            exclude: /node_modules/,
+            loader: "webpack-glsl",
+          },
         ],
       },
     },
