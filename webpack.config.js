@@ -1,7 +1,6 @@
 const config = {
   entry: {
     murker: "./src/murker.js",
-    murkerTest: "./test/murker.js",
   },
   output: {
     path: "./dist",
