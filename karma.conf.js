@@ -23,7 +23,7 @@ module.exports = function (config) {
       "Chrome",
       // "Firefox",
     ],
-    singleRun: true,
+    singleRun: false,
     concurrency: Infinity,
     webpack: {
       module: {

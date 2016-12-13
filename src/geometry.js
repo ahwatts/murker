@@ -29,14 +29,18 @@ function describeVertex(vertex) {
   R.forEach((attrib) => {
     const attribDesc = describeAttrib(vertex, attrib.possibleKeys);
     if (attribDesc.count > 0) {
-      attribDesc.float_offset = R.reduce((m, a) => m + a.count, 0, description.attribs);
-      attribDesc.offset = attribDesc.float_offset * Float32Array.BYTES_PER_ELEMENT;
+      attribDesc.floatOffset = R.reduce(
+        (m, a) => m + a.count, 0,
+        R.values(description.attribs));
+      attribDesc.offset = attribDesc.floatOffset * Float32Array.BYTES_PER_ELEMENT;
       description.attribs[attrib.name] = attribDesc;
     }
   }, PLY_ATTRIBUTES);
 
-  description.float_stride = R.reduce((m, a) => m + a.count, 0, description.attribs);
-  description.stride = description.float_stride * Float32Array.BYTES_PER_ELEMENT;
+  description.floatStride = R.reduce(
+    (m, a) => m + a.count,
+    0, R.values(description.attribs));
+  description.stride = description.floatStride * Float32Array.BYTES_PER_ELEMENT;
 
   return description;
 }
@@ -62,14 +66,16 @@ class Geometry {
     // with gl-matrix without any fuss.
     const vertices = R.map((pv) => {
       const v = {};
-      R.forEach((desc, name) => {
-        const possibleKeys = PLY_ATTRIBUTES_BY_NAME[name].possibleKeys;
-        const attribVal = new Float32Array(desc.count);
-        R.each((k, i) => {
-          attribVal[i] = pv[k];
-        }, possibleKeys);
-        v[name] = attribVal;
-      }, description.attribs);
+      R.forEach((attribName) => {
+        const possibleKeys = PLY_ATTRIBUTES_BY_NAME[attribName].possibleKeys;
+        const attribDesc = description.attribs[attribName];
+        const attribVal = new Float32Array(attribDesc.count);
+        for (let i = 0; i < possibleKeys.length; i += 1) {
+          const key = possibleKeys[i];
+          attribVal[i] = pv[key];
+        }
+        v[attribName] = attribVal;
+      }, R.keys(description.attribs));
       return v;
     }, polyData.vertex);
 
