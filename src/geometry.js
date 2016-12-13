@@ -96,13 +96,14 @@ class Geometry {
     const elementData = new Uint16Array(elements.length);
     elementData.set(elements, 0);
 
-    const vertexData = new Float32Array(description.float_stride * vertices.length);
-    R.forEach((v, i) => {
-      R.forEach((desc, name) => {
-        const base = (i * description.float_stride) + desc.float_offset;
-        vertexData.set(v[name], base);
+    const vertexData = new Float32Array(description.floatStride * vertices.length);
+    for (let i = 0; i < vertices.length; i += 1) {
+      R.forEach((name) => {
+        const desc = description.attribs[name];
+        const base = (i * description.floatStride) + desc.floatOffset;
+        vertexData.set(vertices[i][name], base);
       }, description.attribs);
-    }, vertices);
+    }
 
     const vertexBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
