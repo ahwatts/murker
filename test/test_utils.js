@@ -3,8 +3,39 @@
    no-unused-expressions, import/no-extraneous-dependencies,
    key-spacing */
 
+import { expect } from "chai";
+import WebGLContext from "./webgl_fixture";
 import testVertexShaderSource from "./shaders/test.vert";
 import testFragmentShaderSource from "./shaders/test.frag";
+
+export function withAValidWebGLContext({ contextCreated, contextDestroyed, tests }) {
+  describe("With a valid WebGL Context", function () {
+    let gl = null;
+    let canvas = null;
+
+    before(function () {
+      return WebGLContext().then((context) => {
+        gl = context.gl;
+        canvas = context.canvas;
+        contextCreated(gl, canvas);
+      });
+    });
+
+    after(function () {
+      contextDestroyed();
+      document.body.removeChild(canvas);
+      gl = null;
+      canvas = null;
+    });
+
+    it("should have a non-nil WebGL context", function () {
+      expect(gl).to.exist;
+      expect(canvas).to.exist;
+    });
+
+    tests();
+  });
+}
 
 export function manageLifetime({ create, destroy, cleanup }) {
   beforeEach(create);
