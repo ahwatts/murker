@@ -42,7 +42,9 @@ describe("Geometry", function () {
              expect(geo.vertices).to.exist;
              expect(geo.vertices).to.be.instanceOf(Array);
              R.forEach((v) => {
-               expect(v).to.have.property("position").that.is.instanceOf(Float32Array);
+               expect(v).to.have.property("position").that.is.an.instanceOf(Float32Array);
+               expect(v).to.have.property("color").that.is.an.instanceOf(Float32Array);
+               expect(v).to.not.have.property("normal");
              }, geo.vertices);
            });
       }

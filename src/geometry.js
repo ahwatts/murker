@@ -2,45 +2,52 @@
 
 import R from "ramda";
 
-const PLY_ATTRIBUTES = [
-  { name: "position", possibleKeys: ["x", "y", "z", "w"] },
-  { name: "color", possibleKeys: ["red", "green", "blue", "alpha"] },
-  { name: "normal", possibleKeys: ["nx", "ny", "nz"] },
+const plyAttribToArray = keys => R.pipe(
+  R.props(keys),
+  R.filter(R.complement(R.isNil)),
+);
+
+function attribPair(name, keys, vertex) {
+  return [name, Float32Array.from(plyAttribToArray(keys)(vertex))];
+}
+
+const plyAttributes = [
+  R.partial(attribPair, ["position", ["x", "y", "z", "w"]]),
+  R.partial(attribPair, ["color", ["red", "green", "blue", "alpha"]]),
+  R.partial(attribPair, ["normal", ["nx", "ny", "nz"]]),
 ];
 
-const PLY_ATTRIBUTES_BY_NAME = R.indexBy(a => a.name, PLY_ATTRIBUTES);
-
-function describeAttrib(vertex, possibleFields) {
-  const attrib = { count: 0 };
-  R.forEach((f) => {
-    if (vertex[f] !== undefined) {
-      attrib.count += 1;
-    }
-  }, possibleFields);
-  return attrib;
+function plyVertexToArray(vertex) {
+  return R.fromPairs(
+    R.filter(
+      p => R.last(p).length > 0,
+      R.map(f => f(vertex), plyAttributes),
+    ),
+  );
 }
 
 function describeVertex(vertex) {
   const description = {
     attribs: {},
     stride: 0,
+    floatStride: 0,
   };
 
-  R.forEach((attrib) => {
-    const attribDesc = describeAttrib(vertex, attrib.possibleKeys);
-    if (attribDesc.count > 0) {
-      attribDesc.floatOffset = R.reduce(
-        (m, a) => m + a.count, 0,
-        R.values(description.attribs));
-      attribDesc.offset = attribDesc.floatOffset * Float32Array.BYTES_PER_ELEMENT;
-      description.attribs[attrib.name] = attribDesc;
-    }
-  }, PLY_ATTRIBUTES);
+  let byteOffset = 0;
+  let quadOffset = 0;
+  R.mapObjIndexed((value, name) => {
+    const quadCount = value.length;
+    description.attribs[name] = {
+      offset: byteOffset,
+      floatOffset: quadOffset,
+      count: quadCount,
+    };
+    quadOffset += quadCount;
+    byteOffset += quadCount * Float32Array.BYTES_PER_ELEMENT;
+  }, vertex);
 
-  description.floatStride = R.reduce(
-    (m, a) => m + a.count,
-    0, R.values(description.attribs));
-  description.stride = description.floatStride * Float32Array.BYTES_PER_ELEMENT;
+  description.stride = byteOffset;
+  description.floatStride = quadOffset;
 
   return description;
 }
@@ -57,34 +64,9 @@ class Geometry {
   }
 
   setVertices(polyData) {
-    // Figure out what the vertex attributes are, and prepare the
-    // description of offsets and counts.
-    const sampleVertex = R.head(polyData.vertex);
-    const description = describeVertex(sampleVertex);
-
-    // Turn each attribute in to a Float32Array, so that it can be used
-    // with gl-matrix without any fuss.
-    const vertices = R.map((pv) => {
-      const v = {};
-      R.forEach((attribName) => {
-        const possibleKeys = PLY_ATTRIBUTES_BY_NAME[attribName].possibleKeys;
-        const attribDesc = description.attribs[attribName];
-        const attribVal = new Float32Array(attribDesc.count);
-        for (let i = 0; i < possibleKeys.length; i += 1) {
-          const key = possibleKeys[i];
-          attribVal[i] = pv[key];
-        }
-        v[attribName] = attribVal;
-      }, R.keys(description.attribs));
-      return v;
-    }, polyData.vertex);
-
-    // Flatten the face array into the elements array.
-    const elements = R.flatten(polyData.face);
-
-    this.description = description;
-    this.elements = elements;
-    this.vertices = vertices;
+    this.vertices = R.map(plyVertexToArray, polyData.vertex);
+    this.elements = R.flatten(polyData.face);
+    this.description = describeVertex(R.head(this.vertices));
   }
 
   createBuffers() {
