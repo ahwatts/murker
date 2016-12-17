@@ -80,10 +80,9 @@ class Geometry {
 
     const vertexData = new Float32Array(description.floatStride * vertices.length);
     for (let i = 0; i < vertices.length; i += 1) {
-      R.forEach((name) => {
-        const desc = description.attribs[name];
-        const base = (i * description.floatStride) + desc.floatOffset;
-        vertexData.set(vertices[i][name], base);
+      R.mapObjIndexed((attribDesc, attribName) => {
+        const base = (i * description.floatStride) + attribDesc.floatOffset;
+        vertexData.set(vertices[i][attribName], base);
       }, description.attribs);
     }
 
