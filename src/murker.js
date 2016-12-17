@@ -36,6 +36,10 @@ shell.events.on("gl-init", () => {
   scene.addMesh(octohedronMesh);
 });
 
+shell.events.on("resized", (width, height) => {
+  scene.setViewport(width, height);
+});
+
 shell.events.on("render", () => {
   gl.viewport(0, 0, shell.canvas.width, shell.canvas.height);
   gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);

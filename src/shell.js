@@ -42,6 +42,7 @@ class Shell {
     this.canvas.style = `position: fixed; top: 0; left: 0; width: ${width} height: ${height}`;
     this.canvas.width = width;
     this.canvas.height = height;
+    this.events.emit("resized", width, height);
   }
 
   startRendering() {
@@ -55,6 +56,7 @@ class Shell {
   render() {
     if (this.resized) {
       this.setCanvasSize();
+      this.resized = false;
     }
 
     this.events.emit("render", this);
