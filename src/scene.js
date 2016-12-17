@@ -19,8 +19,6 @@ class Scene {
       height: newHeight,
     };
 
-    console.log(this.viewport.width, this.viewport.height, this.viewport.width / this.viewport.height);
-
     mat4.perspective(
       this.projection,
       Math.PI / 6.0,
