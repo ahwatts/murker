@@ -115,7 +115,7 @@ class Geometry {
   setUpAttributes(program) {
     const gl = this.gl;
     const description = this.description;
-    R.forEach((desc, name) => {
+    R.mapObjIndexed((desc, name) => {
       const location = program.attributes[name];
       if (location !== undefined && location !== null) {
         gl.enableVertexAttribArray(location);
