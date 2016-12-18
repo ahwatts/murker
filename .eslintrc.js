@@ -11,6 +11,7 @@ module.exports = {
     "node": true,
   },
   "rules": {
+    "linebreak-style": "off",
     "quotes": [2, "double"],
     "indent": [
       "error",
