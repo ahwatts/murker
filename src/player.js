@@ -3,26 +3,25 @@ const AudioContext = window.AudioContext || window.webkitAudioContext;
 class Player {
   constructor(audioElement) {
     this.element = audioElement;
-    const context = new AudioContext();
-    const source = context.createMediaElementSource(this.element);
-    const splitter = context.createChannelSplitter(source.channelCount);
-    const analyzers = [];
-    const merger = context.createChannelMerger(source.channelCount);
+    this.element.crossOrigin = "anonymous";
 
-    source.connect(splitter);
-    for (let i = 0; i < source.channelCount; i += 1) {
-      const analyzer = context.createAnalyser();
-      splitter.connect(analyzer, i);
-      analyzer.connect(merger, 0, i);
-      analyzers.push(analyzer);
+    this.context = new AudioContext();
+    this.source = this.context.createMediaElementSource(this.audioElement);
+
+    this.splitter = this.context.createChannelSplitter();
+    this.merger = this.context.createChannelMerger();
+    this.analyzers = [];
+
+    this.source.connect(this.splitter);
+    for (let i = 0; i < this.source.channelCount; i += 1) {
+      this.analyzers[i] = this.context.createAnalyser();
+      this.analyzers[i].fftSize = 2048;
+      this.analyzers[i].smoothingTimeConstant = 0.8;
+      this.splitter.connect(this.analyzers[i], i);
+      this.analyzers[i].connect(this.merger, 0, i);
     }
-    merger.connect(context.destination);
 
-    this.context = context;
-    this.source = source;
-    this.splitter = splitter;
-    this.analyzers = analyzers;
-    this.merger = merger;
+    this.merger.connect(this.context.destination);
   }
 
   play() {
