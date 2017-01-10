@@ -6,7 +6,7 @@ class Player {
     this.element.crossOrigin = "anonymous";
 
     this.context = new AudioContext();
-    this.source = this.context.createMediaElementSource(this.audioElement);
+    this.source = this.context.createMediaElementSource(this.element);
 
     this.splitter = this.context.createChannelSplitter();
     this.merger = this.context.createChannelMerger();

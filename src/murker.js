@@ -1,13 +1,15 @@
 /* eslint no-bitwise: off */
 
+import "./murker.css";
 import Geometry from "./geometry";
 import Mesh from "./mesh";
+import Player from "./player";
 import Program from "./program";
+import ReverbApi from "./reverb_api";
 import Scene from "./scene";
 import Shell from "./shell";
-import "./murker.css";
-import unlitVertexSrc from "./shaders/unlit.vert";
 import unlitFragmentSrc from "./shaders/unlit.frag";
+import unlitVertexSrc from "./shaders/unlit.vert";
 
 let gl = null;
 let unlitProg = null;
@@ -40,6 +42,18 @@ shell.events.on("gl-init", () => {
 
   shell.startRendering();
   shell.startUpdating();
+
+  const api = new ReverbApi("https://local.tunehive.com/api");
+  api.artistSongs(3193).then((songsPage) => {
+    if (songsPage.pagination.result_count > 0) {
+      let audio = document.createElement("audio");
+      audio.style.setProperty("display", "none");
+      audio.src = songsPage.results[0].url;
+      audio = document.body.appendChild(audio);
+      const player = new Player(audio);
+      player.play();
+    }
+  });
 });
 
 shell.events.on("resized", (width, height) => {
