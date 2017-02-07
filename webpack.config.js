@@ -1,6 +1,6 @@
 const config = {
   entry: {
-    murker: "./src/murker.js",
+    murker: ["babel-polyfill", "./src/murker.js"],
   },
   output: {
     path: "./dist",

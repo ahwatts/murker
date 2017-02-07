@@ -1,6 +1,13 @@
 /* eslint no-bitwise: off */
 
+// import { createStore, applyMiddleware } from "redux";
+// import createSagaMiddleware from "redux-saga";
 import "./murker.css";
+import store from "./store";
+
+store.dispatch({ type: "STARTUP" });
+
+/*
 import Geometry from "./geometry";
 import Mesh from "./mesh";
 import Player from "./player";
@@ -70,3 +77,4 @@ shell.events.on("render", () => {
     scene.render();
   }
 });
+*/

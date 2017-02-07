@@ -1,11 +1,18 @@
-import Immutable from "immutable";
-import { createStore } from "redux";
-import murkerReducer from "./reducers";
+/* eslint no-underscore-dangle: off */
 
-const store = createStore(murkerReducer, Immutable.Map({
-  gl: null,
-  geometries: Immutable.Map({}),
-  programs: Immutable.Map({}),
-}));
+import { createStore, applyMiddleware, compose } from "redux";
+import createSagaMiddleware from "redux-saga";
+import rootReducer from "./redux";
+import rootSaga from "./sagas";
+
+const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
+const sagaMiddleware = createSagaMiddleware();
+
+const store = createStore(
+  rootReducer,
+  composeEnhancers(applyMiddleware(sagaMiddleware)),
+);
+
+sagaMiddleware.run(rootSaga);
 
 export default store;
