@@ -1,10 +1,11 @@
-import { put } from "redux-saga/effects";
+import { call, put } from "redux-saga/effects";
 import Geometry from "../geometry";
 import Program from "../program";
 import unlitFragmentSrc from "../shaders/unlit.frag";
 import unlitVertexSrc from "../shaders/unlit.vert";
 import { RenderContextActions } from "../redux/render_context";
 import { SceneGraphActions } from "../redux/scene_graph";
+import { startMainLoop } from "./main_loop";
 
 export function* startup() {
   let canvas = document.createElement("canvas");
@@ -26,6 +27,8 @@ export function* startup() {
   const octohedronGeo = Geometry.octohedron({ gl });
   octohedronGeo.createBuffers();
   yield put(SceneGraphActions.createGeometry("octohedron", octohedronGeo));
+
+  yield call(startMainLoop);
 }
 
 export default {};
