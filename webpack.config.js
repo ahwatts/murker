@@ -3,29 +3,33 @@ const config = {
     murker: ["babel-polyfill", "./src/murker.js"],
   },
   output: {
-    path: "./dist",
+    path: "/dist",
     publicPath: "/assets/",
     filename: "[name].js",
   },
   module: {
-    loaders: [
+    rules: [
       {
         test: /\.js$/,
         exclude: /node_modules/,
-        loader: "babel",
-        query: {
-          presets: ["es2015"],
-        },
+        use: [
+          {
+            loader: "babel-loader",
+            options: {
+              presets: ["es2015"],
+            },
+          },
+        ],
       },
       {
         test: /\.css$/,
         exclude: /node_modules/,
-        loader: "style!css",
+        use: ["style-loader", "css-loader"],
       },
       {
         test: /\.(glsl|vert|frag)$/,
         exclude: /node_modules/,
-        loader: "webpack-glsl",
+        use: ["webpack-glsl-loader"],
       },
     ],
   },
