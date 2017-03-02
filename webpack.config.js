@@ -3,7 +3,7 @@ const config = {
     murker: ["babel-polyfill", "./src/murker.js"],
   },
   output: {
-    path: "dist",
+    // path: "dist",
     publicPath: "/assets/",
     filename: "[name].js",
   },
