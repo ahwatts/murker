@@ -1,12 +1,18 @@
 // Miscellaneous Redux actions that don't quite warrant their own
 // file.
 
-export const UPDATE = "UPDATE";
-export const RENDER = "RENDER";
-export const STARTUP = "STARTUP";
+import R from "ramda";
 
-export const MiscActions = {
-  update: () => ({ type: UPDATE }),
-  render: () => ({ type: RENDER }),
-  startup: () => ({ type: STARTUP }),
+const Types = R.indexBy(R.identity, [
+  "UPDATE",
+  "RENDER",
+  "STARTUP",
+]);
+
+const Actions = {
+  update: () => ({ type: Types.UPDATE }),
+  render: () => ({ type: Types.RENDER }),
+  startup: () => ({ type: Types.STARTUP }),
 };
+
+export default { Types, Actions };

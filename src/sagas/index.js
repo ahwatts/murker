@@ -1,9 +1,10 @@
 import { takeLatest } from "redux-saga";
-import { STARTUP } from "../redux/misc";
-import { startup as startupSaga } from "./startup";
+
+import Misc from "../redux/misc";
+import { startup } from "./startup";
 
 export default function* rootSaga() {
   yield [
-    takeLatest(STARTUP, startupSaga),
+    takeLatest(Misc.Types.STARTUP, startup),
   ];
 }

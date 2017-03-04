@@ -2,10 +2,10 @@
 
 import { call, put, select } from "redux-saga/effects";
 
-import { MiscActions } from "../redux/misc";
-import { RenderContextActions } from "../redux/render_context";
-import { getCanvas, getGlContext, isResizing } from "../redux";
+import Misc from "../redux/misc";
+import RenderContext from "../redux/render_context";
 import store from "../store";
+import { getCanvas, getGlContext, isResizing } from "../redux";
 
 const targetFrameRate = 30.0;
 const targetFrameMsec = 1000.0 / targetFrameRate;
@@ -18,7 +18,7 @@ function startRender(canvas, gl, resizing) {
     canvas.style = `position: fixed; top: 0; left: 0; width: ${width}; height: ${height}; z-index: 0;`;
     canvas.width = width;
     canvas.height = height;
-    store.dispatch(RenderContextActions.resizeCompleted());
+    store.dispatch(RenderContext.Actions.resizeCompleted());
   }
 
   gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
@@ -48,10 +48,10 @@ export function* mainLoop() {
   while (true) {
     const frameStart = performance.now();
 
-    yield put(MiscActions.update());
+    yield put(Misc.Actions.update());
     const resizing = yield select(isResizing);
     yield call(startRender, canvas, gl, resizing);
-    yield put(MiscActions.render());
+    yield put(Misc.Actions.render());
     yield call(finishRender, canvas, gl, resizing);
 
     const frameEnd = performance.now();

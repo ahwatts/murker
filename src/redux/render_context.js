@@ -1,35 +1,37 @@
 import Immutable from "immutable";
 import R from "ramda";
 
-export const CREATE_CANVAS = "CREATE_CANVAS";
-export const CREATE_OPENGL_CONTEXT = "CREATE_OPENGL_CONTEXT";
-export const RESIZE_CANVAS = "RESIZE_CANVAS";
-export const RESIZE_COMPLETED = "RESIZE_COMPLETED";
+const Types = R.indexBy(R.identity, [
+  "CREATE_CANVAS",
+  "CREATE_OPENGL_CONTEXT",
+  "RESIZE_CANVAS",
+  "RESIZE_COMPLETED",
+]);
 
-export const RenderContextActions = {
-  createCanvas: canvas => ({ type: CREATE_CANVAS, canvas }),
-  createOpenGLContext: gl => ({ type: CREATE_OPENGL_CONTEXT, gl }),
-  resizeCanvas: (width, height) => ({ type: RESIZE_CANVAS, width, height }),
-  resizeCompleted: () => ({ type: RESIZE_COMPLETED }),
+const Actions = {
+  createCanvas: canvas => ({ type: Types.CREATE_CANVAS, canvas }),
+  createOpenGLContext: gl => ({ type: Types.CREATE_OPENGL_CONTEXT, gl }),
+  resizeCanvas: (width, height) => ({ type: Types.RESIZE_CANVAS, width, height }),
+  resizeCompleted: () => ({ type: Types.RESIZE_COMPLETED }),
 };
 
-export const RenderContextReducers = {
+const Reducers = {
   createCanvas: (state, { canvas }) => state.merge({ canvas }),
   createOpenGLContext: (state, { gl }) => state.merge({ gl }),
   resizeCanvas: (state, { width, height }) => state.merge({ width, height, resize: true }),
   resizeCompleted: state => state.set("resize", false),
 };
 
-export function rootRenderContextReducer(state, action) {
+function rootReducer(state, action) {
   switch (action.type) {
-  case CREATE_CANVAS:
-    return RenderContextReducers.createCanvas(state, action);
-  case CREATE_OPENGL_CONTEXT:
-    return RenderContextReducers.createOpenGLContext(state, action);
-  case RESIZE_CANVAS:
-    return RenderContextReducers.resizeCanvas(state, action);
-  case RESIZE_COMPLETED:
-    return RenderContextReducers.resizeCompleted(state, action);
+  case Types.CREATE_CANVAS:
+    return Reducers.createCanvas(state, action);
+  case Types.CREATE_OPENGL_CONTEXT:
+    return Reducers.createOpenGLContext(state, action);
+  case Types.RESIZE_CANVAS:
+    return Reducers.resizeCanvas(state, action);
+  case Types.RESIZE_COMPLETED:
+    return Reducers.resizeCompleted(state, action);
   default:
     if (R.isNil(state)) {
       return Immutable.Map({
@@ -43,3 +45,10 @@ export function rootRenderContextReducer(state, action) {
     return state;
   }
 }
+
+export default {
+  Types,
+  Actions,
+  Reducers,
+  rootReducer,
+};
