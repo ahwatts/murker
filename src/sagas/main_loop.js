@@ -1,5 +1,6 @@
 /* eslint no-bitwise: off, no-constant-condition: off, no-param-reassign: off */
 
+import R from "ramda";
 import { call, put, select } from "redux-saga/effects";
 
 import Misc from "../redux/misc";
@@ -7,7 +8,7 @@ import RenderContext from "../redux/render_context";
 import store from "../store";
 import { getCanvas, getGlContext, isResizing } from "../redux";
 
-const targetFrameRate = 30.0;
+const targetFrameRate = 60.0;
 const targetFrameMsec = 1000.0 / targetFrameRate;
 
 function startRender(canvas, gl, resizing) {
@@ -15,7 +16,7 @@ function startRender(canvas, gl, resizing) {
   const height = document.documentElement.clientHeight;
 
   if (resizing) {
-    canvas.style = `position: fixed; top: 0; left: 0; width: ${width}; height: ${height}; z-index: 0;`;
+    canvas.style = `position: fixed; top: 0; left: 0; width: ${width}; height: ${height};`;
     canvas.width = width;
     canvas.height = height;
     store.dispatch(RenderContext.Actions.resizeCompleted());
@@ -41,9 +42,9 @@ export function* mainLoop() {
   times.fill(0.0);
   let timeIndex = 0;
 
-  // let framerateDiv = document.createElement("div");
-  // framerateDiv = document.body.appendChild(framerateDiv);
-  // framerateDiv.style = "color: #FFFFFF; z-index: -1;";
+  let framerateDiv = document.createElement("div");
+  framerateDiv = document.body.appendChild(framerateDiv);
+  framerateDiv.style = "color: #FFFFFF; position: fixed; top: 1em; left: 1em; width: 5em; height: 1em;";
 
   while (true) {
     const frameStart = performance.now();
@@ -59,8 +60,8 @@ export function* mainLoop() {
     times[timeIndex] = (frameEnd - prevTime) / 1000.0;
     prevTime = frameEnd;
     timeIndex = (timeIndex + 1) % times.length;
-    // const frameRate = times.length / R.sum(times);
-    // framerateDiv.innerHTML = `${frameRate}`;
+    const frameRate = Math.round((times.length / R.sum(times)) * 100) / 100;
+    framerateDiv.innerHTML = `${frameRate}`;
 
     yield call(delay, targetFrameMsec - frameMsec);
   }

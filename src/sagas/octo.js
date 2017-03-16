@@ -18,7 +18,7 @@ function renderOcto(mesh, scene) {
 function updateOcto(mesh) {
   const axis = vec3.fromValues(1.0, 1.0, 1.0);
   vec3.normalize(axis, axis);
-  mat4.rotate(mesh.transform, mesh.transform, (1.0 * 3.14) / 180.0, axis);
+  mat4.rotate(mesh.transform, mesh.transform, (0.5 * 3.14) / 180.0, axis);
 }
 
 function resizeScene(scene) {
