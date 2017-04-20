@@ -1,5 +1,5 @@
-import { mat4, quat, vec3 } from "gl-matrix";
 import R from "ramda";
+import { mat4, quat, vec3 } from "gl-matrix";
 
 class Camera {
   constructor(vecs) {

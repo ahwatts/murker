@@ -1,4 +1,4 @@
 import "./murker.css";
-import store from "./store";
+import Store from "./store";
 
-store.dispatch({ type: "STARTUP" });
+Store.dispatch({ type: "STARTUP" });
