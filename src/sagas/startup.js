@@ -1,6 +1,9 @@
+import React from "react";
+import ReactDOM from "react-dom";
 import { put, spawn } from "redux-saga/effects";
 
 import RenderContext from "../redux/render_context";
+import Root from "../components/root";
 import { mainLoop } from "./main_loop";
 import { runOcto } from "./octo";
 import { createResizeChannel, watchResize } from "./resize";
@@ -19,6 +22,12 @@ export function* startup() {
   gl.clearColor(0.0, 0.0, 0.0, 1.0);
   gl.enable(gl.DEPTH_TEST);
   yield put(RenderContext.Actions.createOpenGLContext(gl));
+
+  let chooser = document.createElement("div");
+  chooser = document.body.appendChild(chooser);
+  chooser.style = "position: absolute;";
+
+  ReactDOM.render(React.createElement(Root), chooser);
 
   yield [
     spawn(mainLoop),

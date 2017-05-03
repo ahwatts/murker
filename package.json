@@ -4,9 +4,10 @@
   "private": true,
   "devDependencies": {
     "babel-core": "^6.18.2",
-    "babel-loader": "^6.2.8",
+    "babel-loader": "^7.0.0",
     "babel-polyfill": "^6.22.0",
     "babel-preset-es2015": "^6.18.0",
+    "babel-preset-react": "^6.24.1",
     "chai": "^3.5.0",
     "css-loader": "^0.28.0",
     "eslint": "^3.15.0",
@@ -20,7 +21,7 @@
     "karma-mocha-reporter": "^2.2.1",
     "karma-webpack": "^2.0.2",
     "mocha": "^3.2.0",
-    "style-loader": "^0.16.1",
+    "style-loader": "^0.17.0",
     "webpack": "^2.2.1",
     "webpack-dev-server": "^2.3.0",
     "webpack-glsl-loader": "^1.0.1"
@@ -30,8 +31,11 @@
     "gl-matrix": "^2.3.2",
     "immutable": "^3.8.1",
     "ramda": "^0.23.0",
+    "react": "^15.5.4",
+    "react-dom": "^15.5.4",
+    "react-redux": "^5.0.4",
     "redux": "^3.6.0",
-    "redux-saga": "^0.14.3"
+    "redux-saga": "^0.15.1"
   },
   "scripts": {
     "build": "webpack",

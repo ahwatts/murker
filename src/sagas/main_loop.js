@@ -1,6 +1,5 @@
 /* eslint no-bitwise: off, no-constant-condition: off, no-param-reassign: off */
 
-import R from "ramda";
 import { call, put, select } from "redux-saga/effects";
 
 import Misc from "../redux/misc";
@@ -42,9 +41,10 @@ export function* mainLoop() {
   times.fill(0.0);
   let timeIndex = 0;
 
-  let framerateDiv = document.createElement("div");
-  framerateDiv = document.body.appendChild(framerateDiv);
-  framerateDiv.style = "color: #FFFFFF; position: fixed; top: 1em; left: 1em; width: 5em; height: 1em;";
+  // let framerateDiv = document.createElement("div");
+  // framerateDiv = document.body.appendChild(framerateDiv);
+  // eslint-disable-next-line max-len
+  // framerateDiv.style = "color: #FFFFFF; position: fixed; top: 1em; left: 1em; width: 5em; height: 1em;";
 
   while (true) {
     const frameStart = performance.now();
@@ -60,8 +60,8 @@ export function* mainLoop() {
     times[timeIndex] = (frameEnd - prevTime) / 1000.0;
     prevTime = frameEnd;
     timeIndex = (timeIndex + 1) % times.length;
-    const frameRate = Math.round((times.length / R.sum(times)) * 100) / 100;
-    framerateDiv.innerHTML = `${frameRate}`;
+    // const frameRate = Math.round((times.length / R.sum(times)) * 100) / 100;
+    // framerateDiv.innerHTML = `${frameRate}`;
 
     yield call(delay, targetFrameMsec - frameMsec);
   }

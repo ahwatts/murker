@@ -10,13 +10,13 @@ const config = {
   module: {
     rules: [
       {
-        test: /\.js$/,
+        test: /\.jsx?$/,
         exclude: /node_modules/,
         use: [
           {
             loader: "babel-loader",
             options: {
-              presets: ["es2015"],
+              presets: ["es2015", "react"],
             },
           },
         ],
@@ -37,6 +37,9 @@ const config = {
   devServer: {
     contentBase: "./public",
     publicPath: "/assets/",
+  },
+  resolve: {
+    extensions: [".js", ".jsx"],
   },
 };
 
