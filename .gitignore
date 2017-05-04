@@ -3,3 +3,4 @@
 npm-debug.log
 .dir-locals.el
 /.projectile
+/public/**/*.mp3

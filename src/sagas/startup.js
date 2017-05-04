@@ -4,6 +4,7 @@ import { put, spawn } from "redux-saga/effects";
 
 import RenderContext from "../redux/render_context";
 import Root from "../components/root";
+import Song from "../redux/song";
 import { mainLoop } from "./main_loop";
 import { runOcto } from "./octo";
 import { createResizeChannel, watchResize } from "./resize";
@@ -28,6 +29,8 @@ export function* startup() {
   chooser.style = "position: absolute;";
 
   ReactDOM.render(React.createElement(Root), chooser);
+
+  yield put(Song.Actions.getSongRequest(24425024));
 
   yield [
     spawn(mainLoop),

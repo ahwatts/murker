@@ -10,6 +10,10 @@ class ReverbApi {
   artistSongs(id) {
     return fetch(`${this.base}/artist/${id}/songs`).then(resp => resp.json());
   }
+
+  song(id) {
+    return fetch(`${this.base}/song/${id}`).then(resp => resp.json());
+  }
 }
 
 export default ReverbApi;
