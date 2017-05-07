@@ -2,10 +2,11 @@ module.exports = {
   "extends": "airbnb",
   "installedESLint": true,
   "plugins": [
-    "react",
+    "import",
     "jsx-a11y",
-    "import"
+    "react",
   ],
+  "parser": "babel-eslint",
   "env": {
     "browser": true,
     "node": true,

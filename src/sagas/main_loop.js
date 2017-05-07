@@ -5,7 +5,6 @@ import { call, put, select } from "redux-saga/effects";
 import Misc from "../redux/misc";
 import RenderContext from "../redux/render_context";
 import store from "../store";
-import { getCanvas, getGlContext, isResizing } from "../redux";
 
 const targetFrameRate = 60.0;
 const targetFrameMsec = 1000.0 / targetFrameRate;
@@ -34,8 +33,8 @@ function delay(msec) {
 }
 
 export function* mainLoop() {
-  const canvas = yield select(getCanvas);
-  const gl = yield select(getGlContext);
+  const canvas = yield select(RenderContext.Selectors.getCanvas);
+  const gl = yield select(RenderContext.Selectors.getGlContext);
   let prevTime = performance.now();
   const times = new Float32Array(100);
   times.fill(0.0);
@@ -50,7 +49,7 @@ export function* mainLoop() {
     const frameStart = performance.now();
 
     yield put(Misc.Actions.update());
-    const resizing = yield select(isResizing);
+    const resizing = yield select(RenderContext.Selectors.isResizing);
     yield call(startRender, canvas, gl, resizing);
     yield put(Misc.Actions.render());
     yield call(finishRender, canvas, gl, resizing);

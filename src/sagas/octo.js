@@ -9,7 +9,6 @@ import RenderContext from "../redux/render_context";
 import Scene from "../scene";
 import unlitFragmentSrc from "../shaders/unlit.frag";
 import unlitVertexSrc from "../shaders/unlit.vert";
-import { getDimensions, getGlContext } from "../redux";
 
 function renderOcto(mesh, scene) {
   scene.render();
@@ -28,8 +27,8 @@ function resizeScene(scene) {
 }
 
 export function* runOcto() {
-  const gl = yield select(getGlContext);
-  const { width, height } = yield select(getDimensions);
+  const gl = yield select(RenderContext.Selectors.getGlContext);
+  const { width, height } = yield select(RenderContext.Selectors.getDimensions);
 
   const program = new Program({
     gl,

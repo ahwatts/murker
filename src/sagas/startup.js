@@ -1,10 +1,6 @@
-import React from "react";
-import ReactDOM from "react-dom";
 import { put, spawn } from "redux-saga/effects";
 
 import RenderContext from "../redux/render_context";
-import Root from "../components/root";
-import Song from "../redux/song";
 import { mainLoop } from "./main_loop";
 import { runOcto } from "./octo";
 import { createResizeChannel, watchResize } from "./resize";
@@ -24,19 +20,12 @@ export function* startup() {
   gl.enable(gl.DEPTH_TEST);
   yield put(RenderContext.Actions.createOpenGLContext(gl));
 
-  let chooser = document.createElement("div");
-  chooser = document.body.appendChild(chooser);
-  chooser.style = "position: absolute;";
-
-  ReactDOM.render(React.createElement(Root), chooser);
-
-  yield put(Song.Actions.getSongRequest(24425024));
-
   yield [
     spawn(mainLoop),
-    spawn(runOcto),
     spawn(watchResize, resizeChannel),
   ];
+
+  yield spawn(runOcto);
 }
 
 export default {};

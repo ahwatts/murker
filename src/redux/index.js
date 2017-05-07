@@ -1,26 +1,12 @@
 import { combineReducers } from "redux";
 
+import FindSong from "./find_song";
 import RenderContext from "./render_context";
+import Song from "./song";
 
 const rootReducer = combineReducers({
-  renderContext: RenderContext.rootReducer,
+  [FindSong.namespace]: FindSong.rootReducer,
+  [RenderContext.namespace]: RenderContext.rootReducer,
+  [Song.namespace]: Song.rootReducer,
 });
 export default rootReducer;
-
-export function getGlContext(state) {
-  return state.renderContext.get("gl");
-}
-
-export function getCanvas(state) {
-  return state.renderContext.get("canvas");
-}
-
-export function getDimensions(state) {
-  const width = state.renderContext.get("width");
-  const height = state.renderContext.get("height");
-  return { width, height };
-}
-
-export function isResizing(state) {
-  return state.renderContext.get("resize");
-}

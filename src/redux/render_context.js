@@ -1,6 +1,8 @@
 import Immutable from "immutable";
 import R from "ramda";
 
+const namespace = "renderContext";
+
 const Types = R.indexBy(R.identity, [
   "CREATE_CANVAS",
   "CREATE_OPENGL_CONTEXT",
@@ -46,9 +48,31 @@ function rootReducer(state, action) {
   }
 }
 
+const Selectors = {
+  getGlContext(state) {
+    return state[namespace].get("gl");
+  },
+
+  getCanvas(state) {
+    return state[namespace].get("canvas");
+  },
+
+  getDimensions(state) {
+    const width = state[namespace].get("width");
+    const height = state[namespace].get("height");
+    return { width, height };
+  },
+
+  isResizing(state) {
+    return state[namespace].get("resize");
+  },
+};
+
 export default {
   Types,
   Actions,
   Reducers,
+  Selectors,
+  namespace,
   rootReducer,
 };
