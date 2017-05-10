@@ -1,8 +1,8 @@
 import { put, spawn } from "redux-saga/effects";
 
 import RenderContext from "../redux/render_context";
-import { mainLoop } from "./main_loop";
-import { runOcto } from "./octo";
+import { startMainLoop } from "./main_loop";
+import { octo } from "./octo";
 import { createResizeChannel, watchResize } from "./resize";
 
 export function* startup() {
@@ -20,12 +20,10 @@ export function* startup() {
   gl.enable(gl.DEPTH_TEST);
   yield put(RenderContext.Actions.createOpenGLContext(gl));
 
-  yield [
-    spawn(mainLoop),
-    spawn(watchResize, resizeChannel),
-  ];
+  yield spawn(watchResize, resizeChannel);
 
-  yield spawn(runOcto);
+  const { update, render } = octo(gl);
+  startMainLoop(canvas, gl, update, render);
 }
 
 export default {};
