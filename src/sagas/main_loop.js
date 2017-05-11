@@ -11,7 +11,7 @@ export function doFrame(canvas, gl, onUpdate, onRender) {
   const resizing = RenderContext.Selectors.isResizing(store.getState());
 
   if (resizing) {
-    canvas.style = `position: fixed; top: 0; left: 0; width: ${width}; height: ${height};`;
+    canvas.style = `position: absolute; top: 0; left: 0; width: ${width}; height: ${height};`;
     canvas.width = width;
     canvas.height = height;
     store.dispatch(RenderContext.Actions.resizeCompleted());

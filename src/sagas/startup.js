@@ -1,14 +1,21 @@
+import React from "react";
+import ReactDOM from "react-dom";
 import { put, spawn } from "redux-saga/effects";
 
 import RenderContext from "../redux/render_context";
-import { startMainLoop } from "./main_loop";
-import { octo } from "./octo";
+import Root from "../components/root";
 import { createResizeChannel, watchResize } from "./resize";
+import { octo } from "./octo";
+import { startMainLoop } from "./main_loop";
 
 export function* startup() {
   let canvas = document.createElement("canvas");
   canvas = document.body.appendChild(canvas);
   yield put(RenderContext.Actions.createCanvas(canvas));
+
+  let chooser = document.createElement("div");
+  chooser = document.body.appendChild(chooser);
+  ReactDOM.render(React.createElement(Root), chooser);
 
   const width = document.documentElement.clientWidth;
   const height = document.documentElement.clientHeight;
