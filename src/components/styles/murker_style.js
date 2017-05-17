@@ -6,7 +6,8 @@ export default {
     zIndex: 100,
     backgroundColor: "transparent",
     display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
+    flexFlow: "column",
+    justifyContent: "flex-start",
+    alignItems: "flex-start",
   },
 };
