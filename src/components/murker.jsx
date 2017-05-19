@@ -1,29 +1,23 @@
 /* eslint indent: off */
 
 import PropTypes from "prop-types";
-import R from "ramda";
 import React from "react";
 import { connect } from "react-redux";
-import { BrowserRouter as Router, Route, Link } from "react-router-dom";
+import { HashRouter as Router, Route, Link } from "react-router-dom";
 
 import FindSong from "./find_song";
 import RenderContext from "../redux/render_context";
-import Styles from "./styles/murker_style";
 
 function Murker({ dimensions }) {
   return (
     <Router>
-      <div style={R.merge(Styles.container, {
-             width: dimensions.width,
-             height: dimensions.height,
-           })}>
-        <div>
-          <ul>
-            <li><Link to={"/find_song"}>Find Song</Link></li>
-          </ul>
-
-          <Route path={"/find_song"} component={FindSong} />
+      <div id="murker-root" style={dimensions}>
+        <div id="nav-bar">
+          <Link to={"/"}>Home</Link>
+          <Link to={"/find_song"}>Find Song</Link>
         </div>
+
+        <Route path={"/find_song"} component={FindSong} />
       </div>
     </Router>
   );
