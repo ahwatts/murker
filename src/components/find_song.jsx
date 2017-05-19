@@ -12,8 +12,13 @@ class SongFinder extends React.PureComponent {
 
   render() {
     return (
-      <div style={{ flex: "1 1 auto", flexFlow: "column", justifyContent: "center", alignItems: "center" }}>
-        <input type="text" value={this.props.query} onChange={this.handleQueryChange} />
+      <div className="modal-container">
+        <div className="modal-outer-window">
+          <div className="modal-inner-window">
+            Search for song
+            <input type="text" value={this.props.query} onChange={this.handleQueryChange} />
+          </div>
+        </div>
       </div>
     );
   }

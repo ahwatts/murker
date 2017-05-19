@@ -37,6 +37,11 @@ const config = {
         use: ["style-loader", "css-loader"],
       },
       {
+        test: /\.scss$/,
+        exclude: /node_modules/,
+        use: ["style-loader", "css-loader", "sass-loader"],
+      },
+      {
         test: /\.(glsl|vert|frag)$/,
         exclude: /node_modules/,
         use: ["webpack-glsl-loader"],
