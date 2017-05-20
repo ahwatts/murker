@@ -47,6 +47,10 @@ const Selectors = {
     return state[namespace].get("query");
   },
 
+  isFetching(state) {
+    return state[namespace].get("fetching");
+  },
+
   getResults(state) {
     return state[namespace].get("results");
   },

@@ -62,7 +62,7 @@ get "/api/song/search/:name" do |name|
   cross_origin
   content_type :json
   found_files = SONG_FILES.select do |s|
-    s["entry"]["name"] =~ /#{Regexp.escape(name)}/
+    s["entry"]["name"] =~ /#{Regexp.escape(name)}/i
   end
   entries = found_files.map { |s| s["entry"] }
   { results: entries }.to_json
