@@ -16,7 +16,7 @@ const Actions = {
 };
 
 const Reducers = {
-  findSongQuery: (state, { query }) => state.merge({ fetching: true, query, results: [] }),
+  findSongQuery: (state, { query }) => state.merge({ fetching: true, query }),
   findSongResults: (state, { results }) => state.merge({ fetching: false, results }),
   findSongError: (state, { error }) => state.merge({ fetching: false, results: [], error }),
 };

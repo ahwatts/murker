@@ -13,14 +13,14 @@ class SongFinder extends React.PureComponent {
   render() {
     let resultList = null;
 
-    if (this.props.isFetching) {
-      resultList = "... Searching ...";
-    } else if (!this.props.results.isEmpty()) {
+    if (!this.props.results.isEmpty()) {
       resultList = this.props.results.take(10).map(r => (
         <div className="song-result" key={r.get("id")}>
           {r.get("name")}
         </div>
       ));
+    } else if (this.props.isFetching) {
+      resultList = "... Searching ...";
     }
 
     return (
