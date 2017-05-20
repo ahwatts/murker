@@ -6,16 +6,19 @@ const namespace = "findSong";
 const Types = R.indexBy(R.identity, [
   "FIND_SONG_QUERY",
   "FIND_SONG_RESULTS",
+  "FIND_SONG_ERROR",
 ]);
 
 const Actions = {
   findSongQuery: query => ({ type: Types.FIND_SONG_QUERY, query }),
   findSongResults: results => ({ type: Types.FIND_SONG_RESULTS, results }),
+  findSongError: error => ({ type: Types.FIND_SONG_ERROR, error }),
 };
 
 const Reducers = {
   findSongQuery: (state, { query }) => state.merge({ fetching: true, query, results: [] }),
   findSongResults: (state, { results }) => state.merge({ fetching: false, results }),
+  findSongError: (state, { error }) => state.merge({ fetching: false, results: [], error }),
 };
 
 function rootReducer(state, action) {
@@ -24,12 +27,15 @@ function rootReducer(state, action) {
     return Reducers.findSongQuery(state, action);
   case Types.FIND_SONG_RESULTS:
     return Reducers.findSongResults(state, action);
+  case Types.FIND_SONG_ERROR:
+    return Reducers.findSongError(state, action);
   default:
     if (R.isNil(state)) {
       return Immutable.Map({
         fetching: false,
         query: "",
         results: Immutable.List([]),
+        error: null,
       });
     }
     return state;
@@ -39,6 +45,14 @@ function rootReducer(state, action) {
 const Selectors = {
   getQuery(state) {
     return state[namespace].get("query");
+  },
+
+  getResults(state) {
+    return state[namespace].get("results");
+  },
+
+  getError(state) {
+    return state[namespace].get("error");
   },
 };
 

@@ -6,8 +6,8 @@ import { connect } from "react-redux";
 import FindSong from "../redux/find_song";
 
 class SongFinder extends React.PureComponent {
-  handleQueryChange = (query) => {
-    this.props.setQuery(query);
+  handleQueryChange = (event) => {
+    this.props.setQuery(event.target.value);
   }
 
   render() {
