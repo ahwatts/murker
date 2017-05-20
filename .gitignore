@@ -4,3 +4,5 @@ npm-debug.log
 .dir-locals.el
 /.projectile
 /public/**/*.mp3
+/server/index
+/server/.ruby-*
