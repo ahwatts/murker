@@ -9,7 +9,7 @@ import { getSong, findSong } from "./song";
 import { startup } from "./startup";
 
 export default function* rootSaga() {
-  const api = new ReverbApi("https://local.tunehive.com");
+  const api = new ReverbApi("http://localhost:4567");
   yield all([
     takeLatest(Misc.Types.STARTUP, startup),
     takeEvery(Song.Types.MAKE_GET_SONG_REQUEST, getSong, api),

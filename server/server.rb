@@ -2,6 +2,7 @@
 
 require "json"
 require "sinatra"
+require "sinatra/cross_origin"
 
 def base_dir(args)
   bd = args.shift || "/"
@@ -25,12 +26,12 @@ def load_index(base)
     puts "indexing #{base}/**/*.mp3"
     song_files = Dir.glob("#{base}/**/*.mp3").map.with_index do |file, i|
       {
-        entry: {
-          id: i,
-          name: File.basename(file, ".mp3").gsub(/[^a-zA-Z0-9]/, " ").squeeze(" ").strip,
-          url: "http://localhost:4567/song/#{i}/stream.mp3",
+        "entry" => {
+          "id" => i,
+          "name" => File.basename(file, ".mp3").gsub(/[^a-zA-Z0-9]/, " ").squeeze(" ").strip,
+          "url" => "http://localhost:4567/song/#{i}/stream.mp3",
         },
-        file: file,
+        "file" => file,
       }
     end
     puts "indexed #{song_files.size} songs"
@@ -46,21 +47,28 @@ end
 
 BASE_DIR = base_dir(ARGV).freeze
 SONG_FILES = load_index(BASE_DIR).freeze
+register Sinatra::CrossOrigin
 
 configure do
   mime_type :mp3, "audio/mpeg"
+  enable :cross_origin
 end
 
 get "/" do
   "Hello, World!\n"
 end
 
-get "/song/search/:name" do |name|
+get "/api/song/search/:name" do |name|
+  cross_origin
   content_type :json
-  { results: SONG_FILES.select { |s| s.entry.name =~ /#{Regexp.escape(name)}/ }.map(&:entry) }.to_json
+  found_files = SONG_FILES.select do |s|
+    s["entry"]["name"] =~ /#{Regexp.escape(name)}/
+  end
+  entries = found_files.map { |s| s["entry"] }
+  { results: entries }.to_json
 end
 
 get "/song/:id/stream.mp3" do |id|
   content_type :mp3
-  File.open(SONG_FILES[id][:file])
+  File.read(SONG_FILES[id]["file"])
 end
