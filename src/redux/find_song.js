@@ -29,7 +29,7 @@ function rootReducer(state, action) {
       return Immutable.Map({
         fetching: false,
         query: "",
-        results: [],
+        results: Immutable.List([]),
       });
     }
     return state;
