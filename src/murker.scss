@@ -1,7 +1,32 @@
+@import "~normalize.css";
+
+$font-family-base: "Helvetica Neue", Helvetica, Arial, sans-serif;
+$font-size-base: 14px;
+$line-height-base: 1.15;
+$text-color: black;
+$link-color: black;
+$link-hover-color: darkgray;
+$link-hover-decoration: underline;
+
+html {
+    font-size: 10px;
+}
+
 body {
-    margin: 0;
-    padding: 0;
-    color: white;
+    font-family: $font-family-base;
+    font-size: $font-size-base;
+    line-height: $line-height-base;
+    color: $text-color;
+}
+
+a {
+  color: $link-color;
+  text-decoration: none;
+
+  &:hover, &:focus {
+    color: $link-hover-color;
+    text-decoration: $link-hover-decoration;
+  }
 }
 
 div#murker-root {
@@ -19,8 +44,17 @@ div#murker-root {
         display: flex;
     }
 
-    .nav-bar {
+    #nav-bar {
         flex: 0 1 auto;
+        a {
+            color: lightgray;
+            padding: 0.5em;
+            border: 1px solid darkgreen;
+
+            &:hover, &:focus {
+                color: darkgray;
+            }
+        }
     }
 
     .modal-container {
