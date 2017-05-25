@@ -33,5 +33,6 @@ module.exports = {
     ],
     "react/jsx-first-prop-new-line": "off",
     "react/jsx-closing-bracket-location": "off",
+    "react/jsx-indent-props": "off",
   }
 };

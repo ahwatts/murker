@@ -36,7 +36,7 @@ function rootReducer(state, action) {
     return Reducers.resizeCompleted(state, action);
   default:
     if (R.isNil(state)) {
-      return Immutable.Map({
+      return Immutable.fromJS({
         canvas: null,
         gl: null,
         width: 100,

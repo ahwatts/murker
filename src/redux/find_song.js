@@ -31,10 +31,10 @@ function rootReducer(state, action) {
     return Reducers.findSongError(state, action);
   default:
     if (R.isNil(state)) {
-      return Immutable.Map({
+      return Immutable.fromJS({
         fetching: false,
         query: "",
-        results: Immutable.List([]),
+        results: [],
         error: null,
       });
     }

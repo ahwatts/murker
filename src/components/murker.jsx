@@ -6,6 +6,7 @@ import { connect } from "react-redux";
 import { HashRouter as Router, Route, Link } from "react-router-dom";
 
 import FindSong from "./find_song";
+import Player from "./player";
 import RenderContext from "../redux/render_context";
 
 function Murker({ dimensions }) {
@@ -17,7 +18,13 @@ function Murker({ dimensions }) {
           <Link to={"/find_song"}>Find Song</Link>
         </div>
 
-        <Route path={"/find_song"} component={FindSong} />
+        <div id="main">
+          <Route path={"/find_song"} component={FindSong} />
+        </div>
+
+        <div id="player">
+          <Player />
+        </div>
       </div>
     </Router>
   );

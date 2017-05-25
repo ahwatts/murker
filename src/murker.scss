@@ -57,6 +57,14 @@ div#murker-root {
         }
     }
 
+    #main {
+        flex: 1 1 auto;
+    }
+
+    #player {
+        flex: 0 1 auto;
+    }
+
     .modal-container {
         flex: 1 1 auto;
         flex-flow: column;
