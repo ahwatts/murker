@@ -31,7 +31,8 @@ class Player extends React.Component {
   render() {
     if (this.state.currentSong) {
       return (
-        <div className="player-controls">
+        <div id="player-controls">
+          <span className="icon-play3" />
           {this.state.currentSong.get("name")}
         </div>
       );

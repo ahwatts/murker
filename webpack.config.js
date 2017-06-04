@@ -1,9 +1,11 @@
+const path = require("path");
+
 const config = {
   entry: {
     murker: ["babel-polyfill", "./src/murker.js"],
   },
   output: {
-    // path: "dist",
+    path: path.resolve(__dirname, "dist"),
     publicPath: "/assets/",
     filename: "[name].js",
   },
@@ -45,6 +47,18 @@ const config = {
         test: /\.(glsl|vert|frag)$/,
         exclude: /node_modules/,
         use: ["webpack-glsl-loader"],
+      },
+      {
+        test: /\.(eot|svg|ttf|woff|woff2)$/,
+        exclude: /node_modules/,
+        use: [
+          {
+            loader: "file-loader",
+            options: {
+              name: "fonts/[name]-[hash].[ext]",
+            },
+          },
+        ],
       },
     ],
   },

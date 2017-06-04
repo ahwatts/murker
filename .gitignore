@@ -2,6 +2,7 @@
 /node_modules
 npm-debug.log
 .dir-locals.el
+.DS_Store
 /.projectile
 /public/**/*.mp3
 /server/index
