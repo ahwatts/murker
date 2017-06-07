@@ -70,5 +70,5 @@ end
 
 get "/song/:id/stream.mp3" do |id|
   content_type :mp3
-  File.read(SONG_FILES[id]["file"])
+  File.read(SONG_FILES[id.to_i]["file"])
 end

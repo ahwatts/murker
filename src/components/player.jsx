@@ -1,3 +1,4 @@
+import PropTypes from "prop-types";
 import React from "react";
 import { connect } from "react-redux";
 
@@ -28,11 +29,19 @@ class Player extends React.Component {
     }
   }
 
+  playCurrentSong = () => {
+    console.log(this.state.currentSong);
+    this.props.playSong(this.state.currentSong);
+  }
+
   render() {
     if (this.state.currentSong) {
       return (
         <div id="player-controls">
-          <span className="icon-play3" />
+          <span className="icon-play3"
+                role="button"
+                tabIndex={0}
+                onClick={this.playCurrentSong} />
           {this.state.currentSong.get("name")}
         </div>
       );
@@ -42,14 +51,28 @@ class Player extends React.Component {
   }
 }
 
+Player.propTypes = {
+  // eslint-disable-next-line react/no-unused-prop-types
+  currentSong: PropTypes.shape({
+    name: PropTypes.string,
+  }),
+  playSong: PropTypes.func.isRequired,
+};
+
+Player.defaultProps = {
+  currentSong: null,
+};
+
 function mapStateToProps(state) {
   return {
     currentSong: Song.Selectors.getNowPlayingSong(state),
   };
 }
 
-function mapDispatchToProps(/* dispatch */) {
-  return {};
+function mapDispatchToProps(dispatch) {
+  return {
+    playSong: song => dispatch(Song.Actions.playSong(song.get("url"))),
+  };
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(Player);

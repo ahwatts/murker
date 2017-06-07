@@ -7,6 +7,7 @@ const Types = R.indexBy(R.identity, [
   // "MAKE_GET_SONG_REQUEST",
   // "GET_SONG_SUCCESS",
   // "GET_SONG_ERROR",
+  "PLAY_SONG",
   "SET_NOW_PLAYING_SONG",
 ]);
 
@@ -14,6 +15,7 @@ const Actions = {
   // makeGetSongRequest: id => ({ type: Types.MAKE_GET_SONG_REQUEST, songId: id }),
   // getSongSuccess: song => ({ type: Types.GET_SONG_SUCCESS, song }),
   // getSongError: error => ({ type: Types.GET_SONG_ERROR, error }),
+  playSong: songUrl => ({ type: Types.PLAY_SONG, songUrl }),
   setNowPlayingSong: song => ({ type: Types.SET_NOW_PLAYING_SONG, song }),
 };
 
