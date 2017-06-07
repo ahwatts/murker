@@ -19,6 +19,12 @@ class SongFinder extends React.PureComponent {
     }
   }
 
+  handleKeyPress = (event) => {
+    if (event.key === "Enter") {
+      this.handleSongSelect(event);
+    }
+  }
+
   render() {
     let resultList = null;
 
@@ -29,7 +35,8 @@ class SongFinder extends React.PureComponent {
              tabIndex={0}
              key={song.get("id")}
              data-song-id={song.get("id")}
-             onClick={this.handleSongSelect}>
+             onClick={this.handleSongSelect}
+             onKeyPress={this.handleKeyPress}>
           {song.get("name")}
         </div>
       ));
