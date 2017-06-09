@@ -3,7 +3,7 @@
 import { eventChannel } from "redux-saga";
 import { put, take } from "redux-saga/effects";
 
-import RenderContext from "../redux/render_context";
+import RenderContext from "../redux/render_context_redux";
 
 export function createResizeChannel() {
   return eventChannel((emit) => {

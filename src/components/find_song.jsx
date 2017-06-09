@@ -3,8 +3,8 @@ import PropTypes from "prop-types";
 import React from "react";
 import { connect } from "react-redux";
 
-import FindSong from "../redux/find_song";
-import Song from "../redux/song";
+import Search from "../redux/search_redux";
+import Song from "../redux/song_redux";
 
 class SongFinder extends React.PureComponent {
   handleQueryChange = (event) => {
@@ -68,15 +68,15 @@ SongFinder.propTypes = {
 
 function mapStateToProps(state) {
   return {
-    isFetching: FindSong.Selectors.isFetching(state),
-    query: FindSong.Selectors.getQuery(state),
-    results: FindSong.Selectors.getResults(state),
+    isFetching: Search.Selectors.isFetching(state),
+    query: Search.Selectors.getQuery(state),
+    results: Search.Selectors.getResults(state),
   };
 }
 
 function mapDispatchToProps(dispatch) {
   return {
-    setQuery: query => dispatch(FindSong.Actions.findSongQuery(query)),
+    setQuery: query => dispatch(Search.Actions.findSongQuery(query)),
     playSong: song => dispatch(Song.Actions.setNowPlayingSong(song)),
   };
 }

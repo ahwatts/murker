@@ -5,7 +5,7 @@ import { createStore, applyMiddleware, compose } from "redux";
 
 import rootReducer from "./redux";
 import rootSaga from "./sagas";
-import Misc from "./redux/misc";
+import Misc from "./redux/misc_redux";
 
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ ?
       window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__({

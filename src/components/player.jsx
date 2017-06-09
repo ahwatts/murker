@@ -2,7 +2,7 @@ import PropTypes from "prop-types";
 import React from "react";
 import { connect } from "react-redux";
 
-import Song from "../redux/song";
+import Song from "../redux/song_redux";
 
 class Player extends React.Component {
   constructor(props) {

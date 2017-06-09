@@ -3,43 +3,43 @@
 
 import { expect } from "chai";
 
-import FindSong from "../../src/redux/find_song";
+import Search from "../../src/redux/search_redux";
 
-describe("FindSong redux", () => {
+describe("Search redux", () => {
   context("initial state", () => {
     function createInitialState() {
-      return FindSong.rootReducer(null, {});
+      return Search.rootReducer(null, {});
     }
 
     it("should not be fetching", () => {
-      expect(createInitialState().get("fetching")).to.be.false;
+      expect(createInitialState().getIn(["findSong", "fetching"])).to.be.false;
     });
 
     it("should have an empty query", () => {
-      expect(createInitialState().get("query")).to.equal("");
+      expect(createInitialState().getIn(["findSong", "query"])).to.equal("");
     });
 
     it("should have no results", () => {
-      expect(createInitialState().get("results").isEmpty()).to.be.true;
+      expect(createInitialState().getIn(["findSong", "results"]).isEmpty()).to.be.true;
     });
   });
 
   context("after a query has been submitted", () => {
     function createState() {
-      const initialState = FindSong.rootReducer(null, {});
-      return FindSong.rootReducer(initialState, FindSong.Actions.findSongQuery("foo"));
+      const initialState = Search.rootReducer(null, {});
+      return Search.rootReducer(initialState, Search.Actions.findSongQuery("foo"));
     }
 
     it("should be fetching", () => {
-      expect(createState().get("fetching")).to.be.true;
+      expect(createState().getIn(["findSong", "fetching"])).to.be.true;
     });
 
     it("should have the query", () => {
-      expect(createState().get("query")).to.equal("foo");
+      expect(createState().getIn(["findSong", "query"])).to.equal("foo");
     });
 
     it("should have no results", () => {
-      expect(createState().get("results").isEmpty()).to.be.true;
+      expect(createState().getIn(["findSong", "results"]).isEmpty()).to.be.true;
     });
   });
 });

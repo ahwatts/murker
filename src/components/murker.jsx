@@ -7,7 +7,7 @@ import { HashRouter as Router, Route, Link } from "react-router-dom";
 
 import FindSong from "./find_song";
 import Player from "./player";
-import RenderContext from "../redux/render_context";
+import RenderContext from "../redux/render_context_redux";
 
 function Murker({ dimensions }) {
   return (

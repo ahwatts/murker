@@ -1,8 +1,8 @@
 import R from "ramda";
 import { call, put } from "redux-saga/effects";
 
-import FindSong from "../redux/find_song";
-import Song from "../redux/song";
+import FindSong from "../redux/search_redux";
+import Song from "../redux/song_redux";
 
 export function* getSong(api, { songId }) {
   try {
@@ -34,6 +34,11 @@ export function* findSong(api, { query }) {
   } catch (e) {
     yield put(FindSong.Actions.findSongError(e.toString()));
   }
+}
+
+export function* playSong({ songUrl }) {
+  const response = yield call(fetch, songUrl);
+  console.log({ response });
 }
 
 export default {};

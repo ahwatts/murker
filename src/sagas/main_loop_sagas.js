@@ -1,6 +1,6 @@
 /* eslint no-bitwise: off, no-constant-condition: off, no-param-reassign: off */
 
-import RenderContext from "../redux/render_context";
+import RenderContext from "../redux/render_context_redux";
 import store from "../store";
 
 export function doFrame(canvas, gl, onUpdate, onRender) {

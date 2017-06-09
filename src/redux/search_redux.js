@@ -16,9 +16,15 @@ const Actions = {
 };
 
 const Reducers = {
-  findSongQuery: (state, { query }) => state.merge({ fetching: true, query }),
-  findSongResults: (state, { results }) => state.merge({ fetching: false, results }),
-  findSongError: (state, { error }) => state.merge({ fetching: false, results: [], error }),
+  findSongQuery: (state, { query }) => state.mergeDeep({
+    findSong: { fetching: true, query },
+  }),
+  findSongResults: (state, { results }) => state.mergeDeep({
+    findSong: { fetching: false, results },
+  }),
+  findSongError: (state, { error }) => state.mergeDeep({
+    findSong: { fetching: false, results: [], error },
+  }),
 };
 
 function rootReducer(state, action) {
@@ -32,10 +38,12 @@ function rootReducer(state, action) {
   default:
     if (R.isNil(state)) {
       return Immutable.fromJS({
-        fetching: false,
-        query: "",
-        results: [],
-        error: null,
+        findSong: {
+          fetching: false,
+          query: "",
+          results: [],
+          error: null,
+        },
       });
     }
     return state;
@@ -44,19 +52,19 @@ function rootReducer(state, action) {
 
 const Selectors = {
   getQuery(state) {
-    return state[namespace].get("query");
+    return state[namespace].getIn(["findSong", "query"]);
   },
 
   isFetching(state) {
-    return state[namespace].get("fetching");
+    return state[namespace].getIn(["findSong", "fetching"]);
   },
 
   getResults(state) {
-    return state[namespace].get("results");
+    return state[namespace].getIn(["findSong", "results"]);
   },
 
   getError(state) {
-    return state[namespace].get("error");
+    return state[namespace].getIn(["findSong", "error"]);
   },
 };
 

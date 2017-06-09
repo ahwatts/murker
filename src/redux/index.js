@@ -1,11 +1,11 @@
 import { combineReducers } from "redux";
 
-import FindSong from "./find_song";
-import RenderContext from "./render_context";
-import Song from "./song";
+import Search from "./search_redux";
+import RenderContext from "./render_context_redux";
+import Song from "./song_redux";
 
 const rootReducer = combineReducers({
-  [FindSong.namespace]: FindSong.rootReducer,
+  [Search.namespace]: Search.rootReducer,
   [RenderContext.namespace]: RenderContext.rootReducer,
   [Song.namespace]: Song.rootReducer,
 });

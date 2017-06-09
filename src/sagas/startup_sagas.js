@@ -2,11 +2,11 @@ import React from "react";
 import ReactDOM from "react-dom";
 import { put, spawn } from "redux-saga/effects";
 
-import RenderContext from "../redux/render_context";
+import RenderContext from "../redux/render_context_redux";
 import Root from "../components/root";
-import { createResizeChannel, watchResize } from "./resize";
-import { octo } from "./octo";
-import { startMainLoop } from "./main_loop";
+import { createResizeChannel, watchResize } from "./resize_sagas";
+import { octo } from "./octo_sagas";
+import { startMainLoop } from "./main_loop_sagas";
 
 export function* startup() {
   let canvas = document.createElement("canvas");
