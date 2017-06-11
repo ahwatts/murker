@@ -1,8 +1,10 @@
 import R from "ramda";
-import { call, put } from "redux-saga/effects";
+import { call, put, select } from "redux-saga/effects";
 
 import FindSong from "../redux/search_redux";
 import Song from "../redux/song_redux";
+
+const AudioContext = window.AudioContext || window.webkitAudioContext;
 
 export function* getSong(api, { songId }) {
   try {
@@ -37,8 +39,36 @@ export function* findSong(api, { query }) {
 }
 
 export function* playSong({ songUrl }) {
+  const context = new AudioContext();
   const response = yield call(fetch, songUrl);
-  console.log({ response });
+
+  if (!response.ok) {
+    // handle error
+    return;
+  }
+
+  const rawData = yield call([response, "arrayBuffer"]);
+  const decodedData = yield call([context, "decodeAudioData"], rawData);
+
+  const source = context.createBufferSource();
+  source.buffer = decodedData;
+
+  const splitter = context.createChannelSplitter();
+  const merger = context.createChannelMerger();
+
+  source.connect(splitter);
+  const analyzers = R.times((i) => {
+    const analyzer = context.createAnalyser();
+    splitter.connect(analyzer, i);
+    analyzer.connect(merger, 0, i);
+    return analyzer;
+  }, source.channelCount);
+  merger.connect(context.destination);
+  source.start();
+
+  yield put(Song.Actions.setAudioPipeline({
+    context, source, splitter, merger, analyzers,
+  }));
 }
 
 export default {};

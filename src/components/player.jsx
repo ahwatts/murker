@@ -9,6 +9,7 @@ class Player extends React.Component {
     super(props);
     this.state = {
       currentSong: null,
+      status: "stopped",
     };
   }
 
@@ -17,20 +18,28 @@ class Player extends React.Component {
         newProps.currentSong.get("id") !== this.state.currentSong.get("id")) {
       this.setState({
         currentSong: newProps.currentSong,
+        status: "playing",
       });
     } else if (!this.state.currentSong && newProps.currentSong) {
       this.setState({
         currentSong: newProps.currentSong,
+        status: "playing",
       });
     } else if (this.state.currentSong && !newProps.currentSong) {
       this.setState({
         currentSong: null,
+        status: "stopped",
       });
     }
   }
 
+  componentDidUpdate(oldProps, oldState) {
+    if (oldState.status !== "playing" && this.state.status === "playing") {
+      this.playCurrentSong();
+    }
+  }
+
   playCurrentSong = () => {
-    console.log(this.state.currentSong);
     this.props.playSong(this.state.currentSong);
   }
 
