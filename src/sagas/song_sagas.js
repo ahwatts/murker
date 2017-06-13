@@ -3,6 +3,7 @@ import { call, put, select } from "redux-saga/effects";
 
 import FindSong from "../redux/search_redux";
 import Song from "../redux/song_redux";
+import Utils from "../utils";
 
 const AudioContext = window.AudioContext || window.webkitAudioContext;
 
@@ -39,14 +40,23 @@ export function* findSong(api, { query }) {
 }
 
 export function* playSong({ songUrl }) {
-  const context = new AudioContext();
   const response = yield call(fetch, songUrl);
-
   if (!response.ok) {
     // handle error
     return;
   }
 
+  // Attempt to re-use the previous context. By disconnecting the
+  // merger node from the context's destination, the rest of the
+  // previous pipeline pipeline should get gc'd once the new pipeline
+  // is stored to the redux.
+  const oldPipeline = (yield select(Song.Selectors.getAudioPipeline)).toJS();
+  if (!Utils.isBlank(oldPipeline)) {
+    oldPipeline.source.stop();
+    oldPipeline.merger.disconnect();
+  }
+
+  const context = Utils.isBlank(oldPipeline) ? new AudioContext() : oldPipeline.context;
   const rawData = yield call([response, "arrayBuffer"]);
   const decodedData = yield call([context, "decodeAudioData"], rawData);
 

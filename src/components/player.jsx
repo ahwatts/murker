@@ -19,23 +19,17 @@ class Player extends React.Component {
       this.setState({
         currentSong: newProps.currentSong,
         status: "playing",
-      });
+      }, this.playCurrentSong);
     } else if (!this.state.currentSong && newProps.currentSong) {
       this.setState({
         currentSong: newProps.currentSong,
         status: "playing",
-      });
+      }, this.playCurrentSong);
     } else if (this.state.currentSong && !newProps.currentSong) {
       this.setState({
         currentSong: null,
         status: "stopped",
       });
-    }
-  }
-
-  componentDidUpdate(oldProps, oldState) {
-    if (oldState.status !== "playing" && this.state.status === "playing") {
-      this.playCurrentSong();
     }
   }
 

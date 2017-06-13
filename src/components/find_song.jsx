@@ -1,10 +1,12 @@
 import Immutable from "immutable";
 import PropTypes from "prop-types";
+import R from "ramda";
 import React from "react";
 import { connect } from "react-redux";
 
 import Search from "../redux/search_redux";
 import Song from "../redux/song_redux";
+import Utils from "../utils";
 
 class SongFinder extends React.PureComponent {
   handleQueryChange = (event) => {
@@ -26,20 +28,24 @@ class SongFinder extends React.PureComponent {
   }
 
   render() {
-    let resultList = null;
+    const results = this.props.results.toJS();
 
-    if (!this.props.results.isEmpty()) {
-      resultList = this.props.results.take(10).map(song => (
-        <div className="song-result"
-             role="button"
-             tabIndex={0}
-             key={song.get("id")}
-             data-song-id={song.get("id")}
-             onClick={this.handleSongSelect}
-             onKeyPress={this.handleKeyPress}>
-          {song.get("name")}
-        </div>
-      ));
+    let resultList = null;
+    if (!Utils.isBlank(results)) {
+      resultList = R.pipe(
+        R.take(10),
+        R.map(song => (
+          <div className="song-result"
+               role="button"
+               tabIndex={0}
+               key={song.id}
+               data-song-id={song.id}
+               onClick={this.handleSongSelect}
+               onKeyPress={this.handleKeyPress}>
+            {song.name}
+          </div>
+        )),
+      )(results);
     } else if (this.props.isFetching) {
       resultList = "... Searching ...";
     }

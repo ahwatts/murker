@@ -16,15 +16,15 @@ const Actions = {
 };
 
 const Reducers = {
-  findSongQuery: (state, { query }) => state.mergeDeep({
-    findSong: { fetching: true, query },
-  }),
-  findSongResults: (state, { results }) => state.mergeDeep({
-    findSong: { fetching: false, results },
-  }),
-  findSongError: (state, { error }) => state.mergeDeep({
-    findSong: { fetching: false, results: [], error },
-  }),
+  findSongQuery: (state, { query }) => state.update("findSong", state2 => (
+    state2.merge({ fetching: true, query })
+  )),
+  findSongResults: (state, { results }) => state.update("findSong", state2 => (
+    state2.merge({ fetching: false, results })
+  )),
+  findSongError: (state, { error }) => state.update("findSong", state2 => (
+    state2.merge({ fetching: false, results: [], error })
+  )),
 };
 
 function rootReducer(state, action) {
