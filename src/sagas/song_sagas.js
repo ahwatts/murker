@@ -39,30 +39,18 @@ export function* findSong(api, { query }) {
   }
 }
 
-export function* playSong({ songUrl }) {
-  const response = yield call(fetch, songUrl);
-  if (!response.ok) {
-    // handle error
-    return;
-  }
-
+export function* playSong({ audio }) {
   // Attempt to re-use the previous context. By disconnecting the
   // merger node from the context's destination, the rest of the
   // previous pipeline pipeline should get gc'd once the new pipeline
   // is stored to the redux.
   const oldPipeline = (yield select(Song.Selectors.getAudioPipeline)).toJS();
   if (!Utils.isBlank(oldPipeline)) {
-    oldPipeline.source.stop();
     oldPipeline.merger.disconnect();
   }
 
   const context = Utils.isBlank(oldPipeline) ? new AudioContext() : oldPipeline.context;
-  const rawData = yield call([response, "arrayBuffer"]);
-  const decodedData = yield call([context, "decodeAudioData"], rawData);
-
-  const source = context.createBufferSource();
-  source.buffer = decodedData;
-
+  const source = context.createMediaElementSource(audio);
   const splitter = context.createChannelSplitter();
   const merger = context.createChannelMerger();
 
@@ -74,7 +62,7 @@ export function* playSong({ songUrl }) {
     return analyzer;
   }, source.channelCount);
   merger.connect(context.destination);
-  source.start();
+  audio.play();
 
   yield put(Song.Actions.setAudioPipeline({
     context, source, splitter, merger, analyzers,

@@ -1,3 +1,5 @@
+/* eslint jsx-a11y/media-has-caption: off */
+
 import PropTypes from "prop-types";
 import React from "react";
 import { connect } from "react-redux";
@@ -15,14 +17,14 @@ class Player extends React.Component {
 
   componentWillReceiveProps(newProps) {
     if (newProps.currentSong && this.state.currentSong &&
-        newProps.currentSong.get("id") !== this.state.currentSong.get("id")) {
+        newProps.currentSong.get("id") !== this.state.currentSong.id) {
       this.setState({
-        currentSong: newProps.currentSong,
+        currentSong: newProps.currentSong.toJS(),
         status: "playing",
       }, this.playCurrentSong);
     } else if (!this.state.currentSong && newProps.currentSong) {
       this.setState({
-        currentSong: newProps.currentSong,
+        currentSong: newProps.currentSong.toJS(),
         status: "playing",
       }, this.playCurrentSong);
     } else if (this.state.currentSong && !newProps.currentSong) {
@@ -33,19 +35,32 @@ class Player extends React.Component {
     }
   }
 
+  setAudioRef = (elem) => { this.audio = elem; }
+
   playCurrentSong = () => {
-    this.props.playSong(this.state.currentSong);
+    this.props.playSong(this.state.currentSong, this.audio);
+  }
+
+  renderButtons() {
+    return (
+      <span className="icon-play3"
+            role="button"
+            tabIndex={0}
+            onClick={this.playCurrentSong} />
+    );
   }
 
   render() {
     if (this.state.currentSong) {
       return (
         <div id="player-controls">
-          <span className="icon-play3"
-                role="button"
-                tabIndex={0}
-                onClick={this.playCurrentSong} />
-          {this.state.currentSong.get("name")}
+          <audio src={this.state.currentSong.url}
+                 key={this.state.currentSong.id}
+                 controls={false}
+                 crossOrigin="anonymous"
+                 ref={this.setAudioRef} />
+          {this.renderButtons()}
+          {this.state.currentSong.name}
         </div>
       );
     }
@@ -74,7 +89,7 @@ function mapStateToProps(state) {
 
 function mapDispatchToProps(dispatch) {
   return {
-    playSong: song => dispatch(Song.Actions.playSong(song.get("url"))),
+    playSong: (song, audio) => dispatch(Song.Actions.playSong(song, audio)),
   };
 }
 

@@ -69,6 +69,7 @@ get "/api/song/search/:name" do |name|
 end
 
 get "/song/:id/stream.mp3" do |id|
+  cross_origin
   content_type :mp3
   send_file SONG_FILES[id.to_i]["file"]
 end
