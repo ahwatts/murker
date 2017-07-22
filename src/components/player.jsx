@@ -70,7 +70,6 @@ class Player extends React.Component {
 }
 
 Player.propTypes = {
-  // eslint-disable-next-line react/no-unused-prop-types
   currentSong: PropTypes.shape({
     name: PropTypes.string,
   }),

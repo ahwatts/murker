@@ -181,6 +181,37 @@ class Geometry {
 
     return new Geometry({ gl, polyData: octohedronPolyData });
   }
+
+  static cube({ gl }) {
+    const cubePolyData = {
+      vertex: [
+        { x:  1.0, y:  1.0, z:  1.0 }, // 0
+        { x:  1.0, y:  1.0, z: -1.0 }, // 1
+        { x:  1.0, y: -1.0, z:  1.0 }, // 2
+        { x:  1.0, y: -1.0, z: -1.0 }, // 3
+        { x: -1.0, y:  1.0, z:  1.0 }, // 4
+        { x: -1.0, y:  1.0, z: -1.0 }, // 5
+        { x: -1.0, y: -1.0, z:  1.0 }, // 6
+        { x: -1.0, y: -1.0, z: -1.0 }, // 7
+      ],
+      face: [
+        [0, 2, 1],
+        [1, 2, 3],
+        [0, 4, 6],
+        [2, 0, 6],
+        [4, 5, 7],
+        [6, 4, 7],
+        [5, 1, 3],
+        [7, 5, 3],
+        [0, 1, 5],
+        [4, 0, 5],
+        [2, 6, 7],
+        [3, 2, 7],
+      ],
+    };
+
+    return new Geometry({ gl, polyData: cubePolyData });
+  }
 }
 
 export default Geometry;

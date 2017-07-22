@@ -6,6 +6,7 @@ const namespace = "renderContext";
 const Types = R.indexBy(R.identity, [
   "CREATE_CANVAS",
   "CREATE_OPENGL_CONTEXT",
+  "CREATE_OPENGL_EXTENSION",
   "RESIZE_CANVAS",
   "RESIZE_COMPLETED",
 ]);
@@ -13,6 +14,7 @@ const Types = R.indexBy(R.identity, [
 const Actions = {
   createCanvas: canvas => ({ type: Types.CREATE_CANVAS, canvas }),
   createOpenGLContext: gl => ({ type: Types.CREATE_OPENGL_CONTEXT, gl }),
+  createOpenGLExtension: (name, ext) => ({ type: Types.CREATE_OPENGL_EXTENSION, name, ext }),
   resizeCanvas: (width, height) => ({ type: Types.RESIZE_CANVAS, width, height }),
   resizeCompleted: () => ({ type: Types.RESIZE_COMPLETED }),
 };
@@ -20,6 +22,7 @@ const Actions = {
 const Reducers = {
   createCanvas: (state, { canvas }) => state.merge({ canvas }),
   createOpenGLContext: (state, { gl }) => state.merge({ gl }),
+  createOpenGLExtension: (state, { name, ext }) => state.merge({ [name]: ext }),
   resizeCanvas: (state, { width, height }) => state.merge({ width, height, resize: true }),
   resizeCompleted: state => state.set("resize", false),
 };
@@ -30,6 +33,8 @@ function rootReducer(state, action) {
     return Reducers.createCanvas(state, action);
   case Types.CREATE_OPENGL_CONTEXT:
     return Reducers.createOpenGLContext(state, action);
+  case Types.CREATE_OPENGL_EXTENSION:
+    return Reducers.createOpenGLExtension(state, action);
   case Types.RESIZE_CANVAS:
     return Reducers.resizeCanvas(state, action);
   case Types.RESIZE_COMPLETED:
@@ -51,6 +56,10 @@ function rootReducer(state, action) {
 const Selectors = {
   getGlContext(state) {
     return state[namespace].get("gl");
+  },
+
+  getGlExtension(state, name) {
+    return state[namespace].get(name);
   },
 
   getCanvas(state) {

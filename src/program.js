@@ -6,7 +6,7 @@ function createShader(gl, type, source) {
   gl.compileShader(shader);
   if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
     // const log = gl.getShaderInfoLog(shader);
-    // console.error("Shader failed to compile: " + log + "\n" + "Shader source:\n" + source);
+    // console.error(`Shader failed to compile: ${log}\nShader source:\n${source}`);
     gl.deleteShader(shader);
     shader = null;
   }
@@ -20,7 +20,7 @@ function createProgram(gl, vertexShader, fragmentShader) {
   gl.linkProgram(program);
   if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
     // const log = gl.getProgramInfoLog(program);
-    // console.error("Shader program failed to link: " + log);
+    // console.error(`Shader program failed to link: ${log}`);
     gl.deleteProgram(program);
     program = null;
   }
