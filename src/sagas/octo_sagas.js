@@ -6,13 +6,7 @@ import Program from "../program";
 import Scene from "../scene";
 import unlitFragmentSrc from "../shaders/unlit.frag";
 import unlitVertexSrc from "../shaders/unlit.vert";
-
-function getDimensions() {
-  return {
-    width: document.documentElement.clientWidth,
-    height: document.documentElement.clientHeight,
-  };
-}
+import { getDimensions } from "../utils";
 
 export function octo(gl) {
   const { initWidth, initHeight } = getDimensions();

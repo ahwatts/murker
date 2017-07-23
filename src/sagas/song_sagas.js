@@ -7,6 +7,8 @@ import Utils from "../utils";
 
 const AudioContext = window.AudioContext || window.webkitAudioContext;
 
+export const FREQ_BIN_COUNT = 2048;
+
 export function* getSong(api, { songId }) {
   try {
     const response = yield call([api, "song"], songId);
@@ -57,6 +59,7 @@ export function* playSong({ audio }) {
   source.connect(splitter);
   const analyzers = R.times((i) => {
     const analyzer = context.createAnalyser();
+    analyzer.fftSize = FREQ_BIN_COUNT;
     splitter.connect(analyzer, i);
     analyzer.connect(merger, 0, i);
     return analyzer;
