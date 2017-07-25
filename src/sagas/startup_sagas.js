@@ -6,7 +6,7 @@ import { put, spawn } from "redux-saga/effects";
 import RenderContext from "../redux/render_context_redux";
 import Root from "../components/root";
 import { createResizeChannel, watchResize } from "./resize_sagas";
-import { octo } from "./octo_sagas";
+// import { octo } from "./octo_sagas";
 import { spiral } from "./spiral_sagas";
 import { startMainLoop } from "./main_loop_sagas";
 
@@ -38,7 +38,7 @@ export function* startup() {
   yield spawn(watchResize, resizeChannel);
 
   const { update, render } = spiral(gl);
-  // startMainLoop(canvas, gl, update, render);
+  startMainLoop(canvas, gl, update, render);
 }
 
 export default {};

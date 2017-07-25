@@ -7,7 +7,7 @@ import Utils from "../utils";
 
 const AudioContext = window.AudioContext || window.webkitAudioContext;
 
-export const FREQ_BIN_COUNT = 2048;
+export const FREQ_BIN_COUNT = 1024;
 
 export function* getSong(api, { songId }) {
   try {

@@ -1,7 +1,11 @@
 import R from "ramda";
 
+const isBlank = R.either(R.isNil, R.isEmpty);
+const isPresent = R.complement(isBlank);
+
 export default {
-  isBlank: R.either(R.isNil, R.isEmpty),
+  isBlank,
+  isPresent,
 
   getDimensions() {
     return {
