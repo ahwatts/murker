@@ -21,7 +21,7 @@ class SpiralMesh extends Mesh {
     this.inst = gl.getExtension("ANGLE_instanced_arrays");
     this.a = 5.0;
     this.b = 0.2;
-    this.s = 10.0;
+    this.s = 100.0;
     this.createBuffers();
     this.createTextures();
     mat4.scale(this.transform, this.transform, vec3.fromValues(0.007, 0.007, 0.007));
@@ -73,14 +73,14 @@ class SpiralMesh extends Mesh {
     }
 
     const timeTexData = new Uint8Array(TIME_DOMAIN_LENGTH * TEXTURE_HEIGHT);
-    timeTexData.fill(128);
+    timeTexData.fill(0);
     for (let i = 0; i < TIME_DOMAIN_LENGTH && i < shortestFFT; i += 1) {
       timeTexData[i] = timeEqData[channel1][i];
       timeTexData[((TEXTURE_HEIGHT - 1) * TIME_DOMAIN_LENGTH) + i] = timeEqData[channel2][i];
     }
 
     const freqTexData = new Uint8Array(FREQ_DOMAIN_LENGTH * TEXTURE_HEIGHT);
-    freqTexData.fill(1);
+    freqTexData.fill(0);
     for (let i = 0; i < FREQ_DOMAIN_LENGTH && i < shortestFBC; i += 1) {
       freqTexData[i] = freqEqData[channel1][i];
       freqTexData[((TEXTURE_HEIGHT - 1) * FREQ_DOMAIN_LENGTH) + i] = freqEqData[channel2][i];

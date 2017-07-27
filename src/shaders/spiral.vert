@@ -22,8 +22,8 @@ void main(void) {
   vec4 freq_left  = texture2D(freq_domain, vec2(tex_coord, 0.0));
   vec4 freq_right = texture2D(freq_domain, vec2(tex_coord, 1.0));
 
-  float time = length(vec2(time_left.a, time_right.a));
-  float freq = length(vec2(freq_left.a, freq_right.a));
+  float time = 1.0; // time_left.a + time_right.a;
+  float freq = freq_left.a + freq_right.a;
 
   float angle = 2.0 * 3.1415926 * 100.0 * tex_coord;
   float radius = spiral_a + spiral_b * angle;
@@ -31,5 +31,5 @@ void main(void) {
                    time * freq * spiral_s);
 
   gl_Position = projection * view * model * vec4(base + position, 1.0);
-  v_color = vec4(normalize(vec3(time, 0.0, freq)), 1.0);
+  v_color = vec4(time, 0.0, freq, 1.0);
 }
