@@ -27,9 +27,9 @@ void main(void) {
 
   float angle = 2.0 * 3.1415926 * 100.0 * tex_coord;
   float radius = spiral_a + spiral_b * angle;
-  vec4 base = vec4(radius*cos(angle), radius*sin(angle),
-                   time * freq * spiral_s, 1.0);
+  vec3 base = vec3(radius*cos(angle), radius*sin(angle),
+                   time * freq * spiral_s);
 
-  gl_Position = projection * view * model * (base + vec4(position, 1.0));
-  v_color = vec4(1.0, 1.0, 1.0, 1.0);
+  gl_Position = projection * view * model * vec4(base + position, 1.0);
+  v_color = vec4(normalize(vec3(time, 0.0, freq)), 1.0);
 }

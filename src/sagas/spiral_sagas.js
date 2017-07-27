@@ -9,129 +9,108 @@ import Store from "../store";
 import Utils from "../utils";
 import spiralFragmentSrc from "../shaders/spiral.frag";
 import spiralVertexSrc from "../shaders/spiral.vert";
-import { FREQ_BIN_COUNT } from "./song_sagas";
+import { FFT_SIZE } from "./song_sagas";
+
+const TIME_DOMAIN_LENGTH = FFT_SIZE;
+const FREQ_DOMAIN_LENGTH = FFT_SIZE / 2;
+const TEXTURE_HEIGHT = 3;
 
 class SpiralMesh extends Mesh {
   constructor({ gl, geometry, program }) {
     super({ gl, geometry, program });
     this.inst = gl.getExtension("ANGLE_instanced_arrays");
-    this.a = 10.0;
-    this.b = 0.35;
-    this.s = 0.1;
+    this.a = 5.0;
+    this.b = 0.2;
+    this.s = 10.0;
     this.createBuffers();
     this.createTextures();
-    mat4.scale(this.transform, this.transform, vec3.fromValues(0.01, 0.01, 0.01));
+    mat4.scale(this.transform, this.transform, vec3.fromValues(0.007, 0.007, 0.007));
   }
 
   createTextures() {
     const gl = this.gl;
-    const texWidth = FREQ_BIN_COUNT;
-    const texHeight = 3;
 
-    const timeData = new Uint8Array(texWidth * texHeight);
-    for (let i = 0; i < timeData.length; i += 1) { timeData[i] = 128; }
     this.timeTexture = gl.createTexture();
     gl.bindTexture(gl.TEXTURE_2D, this.timeTexture);
-    gl.texImage2D(
-      gl.TEXTURE_2D,    // target
-      0,                // level
-      gl.ALPHA,         // internal format
-      texWidth,         // width
-      texHeight,        // height
-      0,                // border
-      gl.ALPHA,         // format
-      gl.UNSIGNED_BYTE, // type
-      timeData,         // data
-    );
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-    gl.bindTexture(gl.TEXTURE_2D, null);
+    const blankTimeData = new Uint8Array(TIME_DOMAIN_LENGTH * TEXTURE_HEIGHT);
+    blankTimeData.fill(1);
+    this.updateTextureData(this.timeTexture, TIME_DOMAIN_LENGTH, TEXTURE_HEIGHT, blankTimeData);
 
-    const freqData = new Uint8Array(texWidth * texHeight);
-    for (let i = 0; i < freqData.length; i += 1) { freqData[i] = 128; }
     this.freqTexture = gl.createTexture();
     gl.bindTexture(gl.TEXTURE_2D, this.freqTexture);
-    gl.texImage2D(
-      gl.TEXTURE_2D,    // target
-      0,                // level
-      gl.ALPHA,         // internal format
-      texWidth,         // width
-      texHeight,        // height
-      0,                // border
-      gl.ALPHA,         // format
-      gl.UNSIGNED_BYTE, // type
-      freqData,         // data
-    );
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-    gl.bindTexture(gl.TEXTURE_2D, null);
+    const blankFreqData = new Uint8Array(FREQ_DOMAIN_LENGTH * TEXTURE_HEIGHT);
+    blankFreqData.fill(1);
+    this.updateTextureData(this.freqTexture, FREQ_DOMAIN_LENGTH, TEXTURE_HEIGHT, blankFreqData);
   }
 
   updateTextures(analyzers) {
+    const channel1 = 0;
+    const channel2 = (channel1 + 1) % analyzers.length;
+
+    const timeEqData = new Array(analyzers.length);
+    const freqEqData = new Array(analyzers.length);
+    let shortestFFT = 16384;
+    let shortestFBC = 16384;
+    for (let i = 0; i < analyzers.length; i += 1) {
+      if (analyzers[i].fftSize < shortestFFT) {
+        shortestFFT = analyzers[i].fftSize;
+      }
+      if (analyzers[i].frequencyBinCount < shortestFBC) {
+        shortestFBC = analyzers[i].frequencyBinCount;
+      }
+      timeEqData[i] = new Uint8Array(analyzers[i].fftSize);
+      analyzers[i].getByteTimeDomainData(timeEqData[i]);
+      freqEqData[i] = new Uint8Array(analyzers[i].frequencyBinCount);
+      analyzers[i].getByteFrequencyData(freqEqData[i]);
+    }
+
+    const timeTexData = new Uint8Array(TIME_DOMAIN_LENGTH * TEXTURE_HEIGHT);
+    timeTexData.fill(128);
+    for (let i = 0; i < TIME_DOMAIN_LENGTH && i < shortestFFT; i += 1) {
+      timeTexData[i] = timeEqData[channel1][i];
+      timeTexData[((TEXTURE_HEIGHT - 1) * TIME_DOMAIN_LENGTH) + i] = timeEqData[channel2][i];
+    }
+
+    const freqTexData = new Uint8Array(FREQ_DOMAIN_LENGTH * TEXTURE_HEIGHT);
+    freqTexData.fill(1);
+    for (let i = 0; i < FREQ_DOMAIN_LENGTH && i < shortestFBC; i += 1) {
+      freqTexData[i] = freqEqData[channel1][i];
+      freqTexData[((TEXTURE_HEIGHT - 1) * FREQ_DOMAIN_LENGTH) + i] = freqEqData[channel2][i];
+    }
+
+    this.updateTextureData(this.timeTexture, TIME_DOMAIN_LENGTH, TEXTURE_HEIGHT, timeTexData);
+    this.updateTextureData(this.freqTexture, FREQ_DOMAIN_LENGTH, TEXTURE_HEIGHT, freqTexData);
+  }
+
+  updateTextureData(texture, width, height, bytes) {
     const gl = this.gl;
-    const texWidth = FREQ_BIN_COUNT;
-    const texHeight = 3;
-
-    const timeData = new Uint8Array(texWidth * texHeight);
-    const leftTimeData = new Uint8Array(texWidth);
-    const rightTimeData = new Uint8Array(texWidth);
-    analyzers[0].getByteTimeDomainData(leftTimeData);
-    analyzers[1].getByteTimeDomainData(rightTimeData);
-
-    for (let i = 0; i < FREQ_BIN_COUNT; i += 1) {
-      timeData[i] = leftTimeData[i];
-      timeData[texWidth + i] = 127;
-      timeData[(2 * texWidth) + i] = rightTimeData[i];
-    }
-
-    gl.bindTexture(gl.TEXTURE_2D, this.timeTexture);
+    gl.bindTexture(gl.TEXTURE_2D, texture);
     gl.texImage2D(
       gl.TEXTURE_2D,    // target
       0,                // level
       gl.ALPHA,         // internal format
-      texWidth,         // width
-      texHeight,        // height
+      width,            // width
+      height,           // height
       0,                // border
       gl.ALPHA,         // format
       gl.UNSIGNED_BYTE, // type
-      timeData,         // data
-    );
-
-    const freqData = new Uint8Array(texWidth * texHeight);
-    const leftFreqData = new Uint8Array(texWidth);
-    const rightFreqData = new Uint8Array(texWidth);
-    analyzers[0].getByteFrequencyData(leftFreqData);
-    analyzers[1].getByteFrequencyData(rightFreqData);
-
-    for (let i = 0; i < FREQ_BIN_COUNT; i += 1) {
-      freqData[i] = leftFreqData[i];
-      freqData[texWidth + i] = 127;
-      freqData[(2 * texWidth) + i] = rightFreqData[i];
-    }
-
-    gl.bindTexture(gl.TEXTURE_2D, this.freqTexture);
-    gl.texImage2D(
-      gl.TEXTURE_2D,    // target
-      0,                // level
-      gl.ALPHA,         // internal format
-      texWidth,         // width
-      texHeight,        // height
-      0,                // border
-      gl.ALPHA,         // format
-      gl.UNSIGNED_BYTE, // type
-      freqData,         // data
+      bytes,            // data
     );
   }
 
   createBuffers() {
     const gl = this.gl;
-    this.texCoords = new Float32Array(FREQ_BIN_COUNT);
+    this.texCoords = new Float32Array(FFT_SIZE);
     for (let i = 0; i < this.texCoords.length; i += 1) {
-      this.texCoords[i] = i / FREQ_BIN_COUNT;
+      this.texCoords[i] = i / FFT_SIZE;
     }
     this.texCoordBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, this.texCoordBuffer);
@@ -201,8 +180,12 @@ export function spiral(gl) {
     update() {
       const pipeline = Song.Selectors.getAudioPipeline(Store.getState()).toJS();
       if (pipeline && pipeline.analyzers) {
-        this.mesh.updateTextures(pipeline.analyzers);
+        mesh.updateTextures(pipeline.analyzers);
       }
+
+      const angle = (2 * 3.1415926) / (30 * 60);
+      const axis = vec3.fromValues(0.0, 0.0, 1.0);
+      mat4.rotate(mesh.transform, mesh.transform, angle, axis);
     },
 
     render() {
