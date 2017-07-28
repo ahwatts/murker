@@ -1,4 +1,4 @@
-import R from "ramda";
+// import R from "ramda";
 import React from "react";
 import ReactDOM from "react-dom";
 import { put, spawn } from "redux-saga/effects";
@@ -29,11 +29,11 @@ export function* startup() {
   gl.clearColor(0.0, 0.0, 0.0, 1.0);
   gl.enable(gl.DEPTH_TEST);
 
-  const extensions = gl.getSupportedExtensions();
-  if (R.contains("ANGLE_instanced_arrays", extensions)) {
-    const inst = gl.getExtension("ANGLE_instanced_arrays");
-    yield put(RenderContext.Actions.createOpenGLExtension("inst", inst));
-  }
+  // const extensions = gl.getSupportedExtensions();
+  // if (R.contains("ANGLE_instanced_arrays", extensions)) {
+  //   const inst = gl.getExtension("ANGLE_instanced_arrays");
+  //   yield put(RenderContext.Actions.createOpenGLExtension("inst", inst));
+  // }
 
   yield spawn(watchResize, resizeChannel);
 

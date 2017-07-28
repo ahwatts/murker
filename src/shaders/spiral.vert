@@ -1,6 +1,6 @@
 #version 100
 
-attribute vec3 position;
+// attribute vec3 position;
 attribute float tex_coord;
 
 uniform mat4 model;
@@ -13,6 +13,7 @@ uniform sampler2D freq_domain;
 uniform float spiral_a;
 uniform float spiral_b;
 uniform float spiral_s;
+uniform float spiral_dtheta;
 
 varying vec4 v_color;
 
@@ -30,11 +31,12 @@ void main(void) {
   float time = (time_left + time_right) / 2.0;
   float freq = (freq_left + freq_right) / 2.0;
 
-  float angle = 2.0 * 3.1415926 * 10.0 * tex_coord;
+  float angle = spiral_dtheta * tex_coord;
   float radius = spiral_a + spiral_b * angle;
-  vec3 base = vec3(radius*cos(angle), radius*sin(angle),
-                   time * freq * spiral_s);
+  vec3 position = vec3(radius*sin(angle), radius*cos(angle),
+                       time * freq * spiral_s);
 
-  gl_Position = projection * view * model * vec4(base + position, 1.0);
+  gl_Position = projection * view * model * vec4(position, 1.0);
+  gl_PointSize = 4.0;
   v_color = vec4(abs(time_left), abs(time_right), freq, 1.0);
 }

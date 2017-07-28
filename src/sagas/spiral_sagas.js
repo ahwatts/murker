@@ -14,14 +14,18 @@ import { FFT_SIZE } from "./song_sagas";
 const TIME_DOMAIN_LENGTH = FFT_SIZE;
 const FREQ_DOMAIN_LENGTH = FFT_SIZE / 4;
 const TEXTURE_HEIGHT = 3;
+const MIN_DTHETA = 200.0;
+const MAX_DTHETA = 220.0;
+const D2THETA = 0.005;
 
 class SpiralMesh extends Mesh {
   constructor({ gl, geometry, program }) {
     super({ gl, geometry, program });
-    this.inst = gl.getExtension("ANGLE_instanced_arrays");
     this.a = 1.0;
-    this.b = 3.0;
+    this.b = 0.7;
     this.s = 250.0;
+    this.dtheta = MIN_DTHETA;
+    this.angleIncreasing = true;
     this.createBuffers();
     this.createTextures();
     mat4.scale(this.transform, this.transform, vec3.fromValues(0.007, 0.007, 0.007));
@@ -37,7 +41,7 @@ class SpiralMesh extends Mesh {
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
     const blankTimeData = new Uint8Array(TIME_DOMAIN_LENGTH * TEXTURE_HEIGHT);
-    blankTimeData.fill(128);
+    blankTimeData.fill(0);
     this.updateTextureData(this.timeTexture, TIME_DOMAIN_LENGTH, TEXTURE_HEIGHT, blankTimeData);
 
     this.freqTexture = gl.createTexture();
@@ -47,7 +51,7 @@ class SpiralMesh extends Mesh {
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
     const blankFreqData = new Uint8Array(FREQ_DOMAIN_LENGTH * TEXTURE_HEIGHT);
-    blankFreqData.fill(0);
+    blankFreqData.fill(1);
     this.updateTextureData(this.freqTexture, FREQ_DOMAIN_LENGTH, TEXTURE_HEIGHT, blankFreqData);
   }
 
@@ -138,24 +142,19 @@ class SpiralMesh extends Mesh {
     gl.uniform1f(bLocation, this.b);
     const sLocation = this.program.uniforms.spiral_s;
     gl.uniform1f(sLocation, this.s);
+    const dThetaLocation = this.program.uniforms.spiral_dtheta;
+    gl.uniform1f(dThetaLocation, this.dtheta);
   }
 
   draw() {
     const gl = this.gl;
-    const inst = this.inst;
 
     this.geometry.bindBuffers();
     this.geometry.setUpAttributes(this.program);
     gl.bindBuffer(gl.ARRAY_BUFFER, this.texCoordBuffer);
     gl.enableVertexAttribArray(this.program.attributes.tex_coord);
     gl.vertexAttribPointer(this.program.attributes.tex_coord, 1, gl.FLOAT, false, 4, 0);
-    inst.vertexAttribDivisorANGLE(this.program.attributes.tex_coord, 1);
-    inst.drawElementsInstancedANGLE(
-      gl.TRIANGLES,
-      this.geometry.elements.length,
-      gl.UNSIGNED_SHORT,
-      0,
-      this.texCoords.length);
+    gl.drawArrays(gl.POINTS, 0, this.texCoords.length);
     this.geometry.unbindBuffers();
   }
 }
@@ -186,6 +185,20 @@ export function spiral(gl) {
       // const angle = (2 * 3.1415926) / (30 * 60);
       // const axis = vec3.fromValues(0.0, 0.0, 1.0);
       // mat4.rotate(mesh.transform, mesh.transform, angle, axis);
+
+      if (mesh.angleIncreasing) {
+        mesh.dtheta += D2THETA;
+        if (mesh.dtheta >= MAX_DTHETA) {
+          mesh.dtheta = MAX_DTHETA;
+          mesh.angleIncreasing = false;
+        }
+      } else {
+        mesh.dtheta -= D2THETA;
+        if (mesh.dtheta <= MIN_DTHETA) {
+          mesh.dtheta = MIN_DTHETA;
+          mesh.angleIncreasing = true;
+        }
+      }
     },
 
     render() {
