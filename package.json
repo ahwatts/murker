@@ -12,8 +12,8 @@
     "babel-preset-react": "^6.24.1",
     "chai": "^4.1.0",
     "css-loader": "^0.28.0",
-    "eslint": "^3.15.0",
-    "eslint-config-airbnb": "^15.0.2",
+    "eslint": "^4.3.0",
+    "eslint-config-airbnb": "^15.1.0",
     "eslint-plugin-import": "^2.7.0",
     "eslint-plugin-jsx-a11y": "^5.1.1",
     "eslint-plugin-react": "^7.1.0",
@@ -26,14 +26,14 @@
     "mocha": "^3.2.0",
     "node-sass": "^4.5.3",
     "sass-loader": "^6.0.6",
-    "style-loader": "^0.17.0",
-    "webpack": "^2.7.0",
-    "webpack-dev-server": "^2.5.1",
+    "style-loader": "^0.18.2",
+    "webpack": "^3.4.1",
+    "webpack-dev-server": "^2.6.1",
     "webpack-glsl-loader": "^1.0.1"
   },
   "dependencies": {
     "events": "^1.1.1",
-    "gl-matrix": "^2.3.2",
+    "gl-matrix": "^2.4.0",
     "immutable": "^3.8.1",
     "normalize.css": "^7.0.0",
     "prop-types": "^15.5.9",
@@ -43,7 +43,7 @@
     "react-redux": "^5.0.4",
     "react-router-dom": "^4.1.2",
     "redux": "^3.7.2",
-    "redux-saga": "^0.15.4"
+    "redux-saga": "^0.15.6"
   },
   "scripts": {
     "build": "webpack",
