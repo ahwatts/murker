@@ -1,5 +1,3 @@
-import { mat4, vec3 } from "gl-matrix";
-
 import Geometry from "../geometry";
 import Mesh from "../mesh";
 import Program from "../program";
@@ -21,14 +19,13 @@ const D2THETA = 0.005;
 class SpiralMesh extends Mesh {
   constructor({ gl, geometry, program }) {
     super({ gl, geometry, program });
-    this.a = 1.0;
-    this.b = 0.7;
-    this.s = 250.0;
+    this.a = 0;
+    this.b = 0.005;
+    this.s = 2.0;
     this.dtheta = MIN_DTHETA;
     this.angleIncreasing = true;
     this.createBuffers();
     this.createTextures();
-    mat4.scale(this.transform, this.transform, vec3.fromValues(0.007, 0.007, 0.007));
   }
 
   createTextures() {
