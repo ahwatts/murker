@@ -33,7 +33,7 @@
   },
   "dependencies": {
     "events": "^1.1.1",
-    "gl-matrix": "^2.4.0",
+    "gl-matrix": "~2.3.2",
     "immutable": "^3.8.1",
     "normalize.css": "^7.0.0",
     "prop-types": "^15.5.9",
