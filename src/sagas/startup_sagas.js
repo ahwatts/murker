@@ -1,4 +1,3 @@
-// import R from "ramda";
 import React from "react";
 import ReactDOM from "react-dom";
 import { put, spawn } from "redux-saga/effects";
@@ -7,7 +6,8 @@ import RenderContext from "../redux/render_context_redux";
 import Root from "../components/root";
 import { createResizeChannel, watchResize } from "./resize_sagas";
 // import { octo } from "./octo_sagas";
-import { spiral } from "./spiral_sagas";
+import { particles } from "./particle_sagas";
+// import { spiral } from "./spiral_sagas";
 import { startMainLoop } from "./main_loop_sagas";
 
 export function* startup() {
@@ -29,15 +29,11 @@ export function* startup() {
   gl.clearColor(0.0, 0.0, 0.0, 1.0);
   gl.enable(gl.DEPTH_TEST);
 
-  // const extensions = gl.getSupportedExtensions();
-  // if (R.contains("ANGLE_instanced_arrays", extensions)) {
-  //   const inst = gl.getExtension("ANGLE_instanced_arrays");
-  //   yield put(RenderContext.Actions.createOpenGLExtension("inst", inst));
-  // }
-
   yield spawn(watchResize, resizeChannel);
 
-  const { update, render } = spiral(gl);
+  // const { update, render } = octo(gl);
+  const { update, render } = particles(gl);
+  // const { update, render } = spiral(gl);
   startMainLoop(canvas, gl, update, render);
 }
 
