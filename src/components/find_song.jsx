@@ -74,13 +74,13 @@ class SongFinder extends React.PureComponent {
 }
 
 SongFinder.propTypes = {
-  quitKeyDown: PropTypes.string,
+  history: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
   isFetching: PropTypes.bool.isRequired,
   playSong: PropTypes.func.isRequired,
   query: PropTypes.string.isRequired,
+  quitKeyDown: PropTypes.string,
   results: PropTypes.instanceOf(Immutable.List).isRequired,
   setQuery: PropTypes.func.isRequired,
-  history: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
 };
 
 SongFinder.defaultProps = {
