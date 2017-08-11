@@ -8,9 +8,11 @@ import particleDrawVertexSrc from "../shaders/particle_draw.vert";
 import particleDrawFragmentSrc from "../shaders/particle_draw.frag";
 import particleSimVertexSrc from "../shaders/particle_sim.vert";
 import particleSimFragmentSrc from "../shaders/particle_sim.frag";
+import texDebugVertexSrc from "../shaders/tex_debug.vert";
+import texDebugFragmentSrc from "../shaders/tex_debug.frag";
 
 const PARTICLES_WIDTH = 32;
-const PARTICLES_HEIGHT = 32;
+const PARTICLES_HEIGHT = PARTICLES_WIDTH;
 const NUM_PARTICLES = PARTICLES_WIDTH * PARTICLES_HEIGHT;
 
 function createComputeTexture(gl) {
@@ -78,14 +80,22 @@ class ComputeFramebuffer {
     gl.framebufferTexture2D(
       gl.FRAMEBUFFER, drawBuf.COLOR_ATTACHMENT2_WEBGL,
       gl.TEXTURE_2D, this.colorsTexture, 0);
+
+    drawBuf.drawBuffersWEBGL([
+      drawBuf.COLOR_ATTACHMENT0_WEBGL,
+      drawBuf.COLOR_ATTACHMENT1_WEBGL,
+      drawBuf.COLOR_ATTACHMENT2_WEBGL,
+    ]);
+
     gl.bindFramebuffer(gl.FRAMEBUFFER, null);
   }
 }
 
 export function particles(gl) {
-  // eslint-disable-next-line no-unused-vars
+  /* eslint-disable no-unused-vars */
   const texFloat = gl.getExtension("OES_texture_float");
   const drawBuf = gl.getExtension("WEBGL_draw_buffers");
+  /* eslint-enable no-unused-vars */
 
   const simProgram = new Program({
     gl,
@@ -97,6 +107,12 @@ export function particles(gl) {
     gl,
     vertexSource: particleDrawVertexSrc,
     fragmentSource: particleDrawFragmentSrc,
+  });
+
+  const texDebugProgram = new Program({
+    gl,
+    vertexSource: texDebugVertexSrc,
+    fragmentSource: texDebugFragmentSrc,
   });
 
   const particleUVs = new Float32Array(NUM_PARTICLES * 2);
@@ -134,55 +150,68 @@ export function particles(gl) {
   gl.bufferData(gl.ARRAY_BUFFER, particleUVs, gl.STATIC_DRAW);
   gl.bindBuffer(gl.ARRAY_BUFFER, null);
 
-  // let srcComputeFramebuffer = new ComputeFramebuffer(gl, positions, momenta, colors);
+  let srcComputeFramebuffer = new ComputeFramebuffer(gl, positions, momenta, colors);
   let dstComputeFramebuffer = new ComputeFramebuffer(gl, positions, momenta, colors);
+
+  /* eslint-disable no-multi-spaces, indent */
+  const squareVertices = Float32Array.from([
+    -1.0, -1.0, 0.0,  0.0, 0.0,
+     1.0,  1.0, 0.0,  1.0, 1.0,
+    -1.0,  1.0, 0.0,  0.0, 1.0,
+
+     1.0,  1.0, 0.0,  1.0, 1.0,
+    -1.0, -1.0, 0.0,  0.0, 0.0,
+     1.0, -1.0, 0.0,  1.0, 0.0,
+  ]);
+  /* eslint-enable no-multi-spaces, indent */
+
+  const squareBuffer = gl.createBuffer();
+  gl.bindBuffer(gl.ARRAY_BUFFER, squareBuffer);
+  gl.bufferData(gl.ARRAY_BUFFER, squareVertices, gl.STATIC_DRAW);
+  gl.bindBuffer(gl.ARRAY_BUFFER, null);
 
   return {
     update() {
-      // // Swap the framebuffers.
-      // const tmp = srcComputeFramebuffer;
-      // srcComputeFramebuffer = dstComputeFramebuffer;
-      // dstComputeFramebuffer = tmp;
+      // Swap the framebuffers.
+      const tmp = srcComputeFramebuffer;
+      srcComputeFramebuffer = dstComputeFramebuffer;
+      dstComputeFramebuffer = tmp;
 
-      // gl.useProgram(simProgram.program);
+      gl.useProgram(simProgram.program);
 
-      // // Attributes
-      // gl.bindBuffer(gl.ARRAY_BUFFER, uvsBuffer);
-      // gl.enableVertexAttribArray(simProgram.attributes.tex_coord);
-      // gl.vertexAttribPointer(simProgram.attributes.tex_coord, 2, gl.FLOAT, false, 8, 0);
+      // Attributes
+      gl.bindBuffer(gl.ARRAY_BUFFER, uvsBuffer);
+      gl.enableVertexAttribArray(simProgram.attributes.tex_coord);
+      gl.vertexAttribPointer(simProgram.attributes.tex_coord, 2, gl.FLOAT, false, 8, 0);
 
-      // // Uniforms
-      // gl.uniform1f(simProgram.uniforms.dt, 0.001);
+      // Uniforms
+      gl.uniform1f(simProgram.uniforms.dt, 0.001);
+      gl.uniform2fv(simProgram.uniforms.resolution, [PARTICLES_WIDTH, PARTICLES_HEIGHT]);
 
-      // // Textures
-      // gl.activeTexture(gl.TEXTURE0);
-      // gl.bindTexture(gl.TEXTURE_2D, srcComputeFramebuffer.positionsTexture);
-      // gl.uniform1i(simProgram.uniforms.positions, 0);
-      // gl.activeTexture(gl.TEXTURE1);
-      // gl.bindTexture(gl.TEXTURE_2D, srcComputeFramebuffer.momentaTexture);
-      // gl.uniform1i(simProgram.uniforms.momenta, 1);
-      // gl.activeTexture(gl.TEXTURE2);
-      // gl.bindTexture(gl.TEXTURE_2D, srcComputeFramebuffer.colorsTexture);
-      // gl.uniform1i(simProgram.colors, 2);
+      // Textures
+      gl.activeTexture(gl.TEXTURE0);
+      gl.bindTexture(gl.TEXTURE_2D, srcComputeFramebuffer.positionsTexture);
+      gl.uniform1i(simProgram.uniforms.positions, 0);
+      gl.activeTexture(gl.TEXTURE1);
+      gl.bindTexture(gl.TEXTURE_2D, srcComputeFramebuffer.momentaTexture);
+      gl.uniform1i(simProgram.uniforms.momenta, 1);
+      gl.activeTexture(gl.TEXTURE2);
+      gl.bindTexture(gl.TEXTURE_2D, srcComputeFramebuffer.colorsTexture);
+      gl.uniform1i(simProgram.colors, 2);
 
-      // // Output
-      // gl.bindFramebuffer(gl.FRAMEBUFFER, dstComputeFramebuffer.framebuffer);
-      // drawBuf.drawBuffersWEBGL([
-      //   drawBuf.COLOR_ATTACHMENT0_WEBGL,
-      //   drawBuf.COLOR_ATTACHMENT1_WEBGL,
-      //   drawBuf.COLOR_ATTACHMENT2_WEBGL,
-      // ]);
+      // Output
+      gl.bindFramebuffer(gl.FRAMEBUFFER, dstComputeFramebuffer.framebuffer);
+      gl.viewport(0, 0, PARTICLES_WIDTH, PARTICLES_HEIGHT);
 
-      // // "Draw"
-      // gl.viewport(0, 0, PARTICLES_WIDTH, PARTICLES_HEIGHT);
+      // "Draw"
       // gl.clear(gl.COLOR_BUFFER_BIT);
-      // gl.drawArrays(gl.POINTS, 0, particleUVs.length / 2);
+      gl.drawArrays(gl.POINTS, 0, particleUVs.length / 2);
 
-      // // Cleanup.
-      // gl.bindBuffer(gl.ARRAY_BUFFER, null);
-      // gl.bindTexture(gl.TEXTURE_2D, null);
-      // gl.bindFramebuffer(gl.FRAMEBUFFER, null);
-      // gl.useProgram(null);
+      // Cleanup.
+      gl.bindBuffer(gl.ARRAY_BUFFER, null);
+      gl.bindTexture(gl.TEXTURE_2D, null);
+      gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+      gl.useProgram(null);
     },
 
     render() {
@@ -199,6 +228,9 @@ export function particles(gl) {
         vec3.fromValues(0.0, 1.0, 0.0),
       );
       mat4.identity(model);
+
+      gl.viewport(0, 0, width, height);
+      gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
       gl.useProgram(drawProgram.program);
 
@@ -220,17 +252,36 @@ export function particles(gl) {
       gl.bindTexture(gl.TEXTURE_2D, dstComputeFramebuffer.colorsTexture);
       gl.uniform1i(drawProgram.uniforms.colors, 1);
 
-      // Output
-      gl.bindFramebuffer(gl.FRAMEBUFFER, null);
-
       // Draw
-      gl.viewport(0, 0, width, height);
-      gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
       gl.drawArrays(gl.POINTS, 0, particleUVs.length / 2);
 
       // Cleanup.
       gl.bindBuffer(gl.ARRAY_BUFFER, null);
       gl.bindTexture(gl.TEXTURE_2D, null);
+      gl.useProgram(null);
+
+      const model2 = mat4.create();
+      mat4.translate(model2, model, vec3.fromValues(-2.0, 0.0, 0.0));
+
+      gl.useProgram(texDebugProgram.program);
+
+      gl.bindBuffer(gl.ARRAY_BUFFER, squareBuffer);
+      gl.enableVertexAttribArray(texDebugProgram.attributes.position);
+      gl.vertexAttribPointer(texDebugProgram.attributes.position, 3, gl.FLOAT, false, 20, 0);
+      gl.enableVertexAttribArray(texDebugProgram.attributes.tex_coord);
+      gl.vertexAttribPointer(texDebugProgram.attributes.tex_coord, 2, gl.FLOAT, false, 20, 12);
+      gl.bindBuffer(gl.ARRAY_BUFFER, null);
+
+      gl.uniformMatrix4fv(texDebugProgram.uniforms.model, false, model2);
+      gl.uniformMatrix4fv(texDebugProgram.uniforms.view, false, view);
+      gl.uniformMatrix4fv(texDebugProgram.uniforms.projection, false, projection);
+
+      gl.activeTexture(gl.TEXTURE0);
+      gl.bindTexture(gl.TEXTURE_2D, dstComputeFramebuffer.positionsTexture);
+      gl.uniform1i(texDebugProgram.uniforms.colors, 0);
+
+      gl.drawArrays(gl.TRIANGLES, 0, squareVertices.length / 5);
+
       gl.useProgram(null);
     },
   };

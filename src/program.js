@@ -1,3 +1,5 @@
+/* eslint no-console: off */
+
 import R from "ramda";
 
 function createShader(gl, type, source) {
