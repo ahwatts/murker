@@ -70,10 +70,9 @@ class Geometry {
   }
 
   createBuffers() {
-    const gl = this.gl;
-    const vertices = this.vertices;
-    const elements = this.elements;
-    const description = this.description;
+    const {
+      gl, vertices, elements, description,
+    } = this;
 
     const elementData = new Uint16Array(elements.length);
     elementData.set(elements, 0);
@@ -101,20 +100,19 @@ class Geometry {
   }
 
   bindBuffers() {
-    const gl = this.gl;
+    const { gl } = this;
     gl.bindBuffer(gl.ARRAY_BUFFER, this.vertexBuffer);
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.elementBuffer);
   }
 
   unbindBuffers() {
-    const gl = this.gl;
+    const { gl } = this;
     gl.bindBuffer(gl.ARRAY_BUFFER, null);
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, null);
   }
 
   setUpAttributes(program) {
-    const gl = this.gl;
-    const description = this.description;
+    const { gl, description } = this;
     R.mapObjIndexed((desc, name) => {
       const location = program.attributes[name];
       if (location !== undefined && location !== null) {
@@ -125,13 +123,14 @@ class Geometry {
           gl.FLOAT,
           false,
           description.stride,
-          desc.offset);
+          desc.offset,
+        );
       }
     }, description.attribs);
   }
 
   draw() {
-    const gl = this.gl;
+    const { gl } = this;
     gl.drawElements(gl.TRIANGLES, this.elements.length, gl.UNSIGNED_SHORT, 0);
     gl.flush();
   }
@@ -144,7 +143,7 @@ class Geometry {
   }
 
   destroy() {
-    const gl = this.gl;
+    const { gl } = this;
     if (gl.isBuffer(this.vertexBuffer)) {
       gl.deleteBuffer(this.vertexBuffer);
     }
@@ -158,6 +157,7 @@ class Geometry {
   }
 
   static octohedron({ gl }) {
+    /* eslint-disable */
     const octohedronPolyData = {
       vertex: [
         { x:  1.0, y:  0.0, z:  0.0, red: 1.0, green: 0.0, blue: 0.0, alpha: 1.0 },
@@ -178,6 +178,7 @@ class Geometry {
         [5, 1, 2],
       ],
     };
+    /* eslint-enable */
 
     return new Geometry({ gl, polyData: octohedronPolyData });
   }
