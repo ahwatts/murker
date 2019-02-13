@@ -3,7 +3,7 @@ const path = require("path");
 const config = {
   mode: "development",
   entry: {
-    murker: ["babel-polyfill", "./src/murker.js"],
+    murker: ["@babel/polyfill", "./src/murker.js"],
   },
   output: {
     path: path.resolve(__dirname, "dist"),
@@ -19,16 +19,16 @@ const config = {
           {
             loader: "babel-loader",
             options: {
-              plugins: ["transform-class-properties"],
+              plugins: ["@babel/plugin-proposal-class-properties"],
               presets: [
                 [
-                  "env", {
+                  "@babel/preset-env", {
                     targets: {
                       browsers: "last 2 versions",
                     },
                   },
                 ],
-                "react",
+                "@babel/preset-react",
               ],
             },
           },
