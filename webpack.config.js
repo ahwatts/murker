@@ -1,6 +1,7 @@
 const path = require("path");
 
 const config = {
+  mode: "development",
   entry: {
     murker: ["babel-polyfill", "./src/murker.js"],
   },
