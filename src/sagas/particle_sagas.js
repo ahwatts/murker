@@ -75,7 +75,7 @@ function initGlobals(gl) {
 }
 
 function createComputeTexture() {
-  const gl = GLOBALS.context.gl;
+  const { gl } = GLOBALS.context;
   const tex = gl.createTexture();
   gl.bindTexture(gl.TEXTURE_2D, tex);
   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
@@ -87,7 +87,7 @@ function createComputeTexture() {
 }
 
 function setTextureData(texture, format, type, width, height, data) {
-  const gl = GLOBALS.context.gl;
+  const { gl } = GLOBALS.context;
   gl.bindTexture(gl.TEXTURE_2D, texture);
   /* eslint-disable no-multi-spaces */
   gl.texImage2D(
@@ -107,38 +107,43 @@ function setTextureData(texture, format, type, width, height, data) {
 
 class ComputeFramebuffer {
   constructor(positions, velocities, colors) {
-    const gl = GLOBALS.context.gl;
-    const drawBuf = GLOBALS.context.drawBuf;
+    const { gl, drawBuf } = GLOBALS.context;
 
     this.positionsTexture = createComputeTexture(gl);
     setTextureData(
       this.positionsTexture, gl.RGB, gl.FLOAT,
       PARTICLES_WIDTH, PARTICLES_HEIGHT,
-      positions);
+      positions,
+    );
 
     this.velocitiesTexture = createComputeTexture(gl);
     setTextureData(
       this.velocitiesTexture, gl.RGB, gl.FLOAT,
       PARTICLES_WIDTH, PARTICLES_HEIGHT,
-      velocities);
+      velocities,
+    );
 
     this.colorsTexture = createComputeTexture(gl);
     setTextureData(
       this.colorsTexture, gl.RGBA, gl.FLOAT,
       PARTICLES_WIDTH, PARTICLES_HEIGHT,
-      colors);
+      colors,
+    );
 
     this.framebuffer = gl.createFramebuffer();
     gl.bindFramebuffer(gl.FRAMEBUFFER, this.framebuffer);
     gl.framebufferTexture2D(
       gl.FRAMEBUFFER, drawBuf.COLOR_ATTACHMENT0_WEBGL,
-      gl.TEXTURE_2D, this.positionsTexture, 0);
+      gl.TEXTURE_2D, this.positionsTexture, 0,
+    );
     gl.framebufferTexture2D(
       gl.FRAMEBUFFER, drawBuf.COLOR_ATTACHMENT1_WEBGL,
-      gl.TEXTURE_2D, this.velocitiesTexture, 0);
+      gl.TEXTURE_2D, this.velocitiesTexture, 0,
+    );
     gl.framebufferTexture2D(
       gl.FRAMEBUFFER, drawBuf.COLOR_ATTACHMENT2_WEBGL,
-      gl.TEXTURE_2D, this.colorsTexture, 0);
+      gl.TEXTURE_2D, this.colorsTexture, 0,
+    );
 
     drawBuf.drawBuffersWEBGL([
       drawBuf.COLOR_ATTACHMENT0_WEBGL,
@@ -152,7 +157,7 @@ class ComputeFramebuffer {
 
 class ParticleSystem {
   constructor(width, height, texCoords, positions, velocities, colors) {
-    const gl = GLOBALS.context.gl;
+    const { gl } = GLOBALS.context;
     this.width = width;
     this.height = height;
 
@@ -173,7 +178,7 @@ class ParticleSystem {
   }
 
   simulate(simProgram, setup, teardown) {
-    const gl = GLOBALS.context.gl;
+    const { gl } = GLOBALS.context;
 
     // Swap the framebuffers.
     const tmp = this.srcComputeFramebuffer;
@@ -219,7 +224,7 @@ class ParticleSystem {
   }
 
   draw(matrices) {
-    const gl = GLOBALS.context.gl;
+    const { gl } = GLOBALS.context;
 
     gl.useProgram(this.drawProgram.program);
 
@@ -285,7 +290,8 @@ export function particles(gl) {
 
   const system = new ParticleSystem(
     PARTICLES_WIDTH, PARTICLES_HEIGHT, particleUVs,
-    positions, velocities, colors);
+    positions, velocities, colors,
+  );
 
   return {
     update() {
@@ -321,8 +327,8 @@ export function particles(gl) {
 
       system.draw({ model, view, projection });
 
-      // const model2 = mat4.create();
-      // mat4.translate(model2, model, vec3.fromValues(-2.0, 0.0, 0.0));
+      const model2 = mat4.create();
+      mat4.translate(model2, model, vec3.fromValues(-2.0, 0.0, 0.0));
 
       // gl.useProgram(texDebugProgram.program);
 

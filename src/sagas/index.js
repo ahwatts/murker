@@ -1,5 +1,4 @@
-import { all } from "redux-saga/effects";
-import { takeEvery, takeLatest } from "redux-saga";
+import { all, takeEvery, takeLatest } from "redux-saga/effects";
 
 import Search from "../redux/search_redux";
 import Song from "../redux/song_redux";

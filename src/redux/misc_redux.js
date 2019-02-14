@@ -1,7 +1,7 @@
 // Miscellaneous Redux actions that don't quite warrant their own
 // file.
 
-import R from "ramda";
+import * as R from "ramda";
 
 const Types = R.indexBy(R.identity, [
   "UPDATE",

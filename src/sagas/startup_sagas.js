@@ -7,8 +7,8 @@ import Root from "../components/root";
 import { createKeyPressChannel, watchKeyPresses } from "./keypress_sagas";
 import { createResizeChannel, watchResize } from "./resize_sagas";
 // import { octo } from "./octo_sagas";
-// import { particles } from "./particle_sagas";
-import { spiral } from "./spiral_sagas";
+import { particles } from "./particle_sagas";
+// import { spiral } from "./spiral_sagas";
 import { startMainLoop } from "./main_loop_sagas";
 
 export function* startup() {
@@ -35,8 +35,8 @@ export function* startup() {
   gl.enable(gl.DEPTH_TEST);
 
   // const { update, render } = octo(gl);
-  // const { update, render } = particles(gl);
-  const { update, render } = spiral(gl);
+  const { update, render } = particles(gl);
+  // const { update, render } = spiral(gl);
   startMainLoop(canvas, gl, update, render);
 }
 

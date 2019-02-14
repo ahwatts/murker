@@ -1,4 +1,4 @@
-import R from "ramda";
+import * as R from "ramda";
 import { call, put, select } from "redux-saga/effects";
 
 import FindSong from "../redux/search_redux";

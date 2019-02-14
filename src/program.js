@@ -1,6 +1,6 @@
 /* eslint no-console: off */
 
-import R from "ramda";
+import * as R from "ramda";
 
 function createShader(gl, type, source) {
   let shader = gl.createShader(type);

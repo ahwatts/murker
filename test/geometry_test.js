@@ -3,7 +3,7 @@
    no-unused-expressions, import/no-extraneous-dependencies */
 
 import { expect } from "chai";
-import R from "ramda";
+import * as R from "ramda";
 import Geometry from "../src/geometry";
 import Program from "../src/program";
 import {

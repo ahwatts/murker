@@ -1,5 +1,5 @@
 import Immutable from "immutable";
-import R from "ramda";
+import * as R from "ramda";
 
 const namespace = "song";
 

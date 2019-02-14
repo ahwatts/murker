@@ -1,6 +1,6 @@
 /* eslint key-spacing: off */
 
-import R from "ramda";
+import * as R from "ramda";
 
 const plyAttribToArray = keys => R.pipe(
   R.props(keys),

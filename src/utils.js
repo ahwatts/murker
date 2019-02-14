@@ -1,4 +1,4 @@
-import R from "ramda";
+import * as R from "ramda";
 
 const isBlank = R.either(R.isNil, R.isEmpty);
 const isPresent = R.complement(isBlank);
