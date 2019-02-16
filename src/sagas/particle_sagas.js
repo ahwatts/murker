@@ -17,8 +17,7 @@ const NUM_PARTICLES = PARTICLES_WIDTH * PARTICLES_HEIGHT;
 const GLOBALS = {
   context: {
     gl: null,
-    drawBuf: null,
-    texFloat: null,
+    colorBufferFloat: null,
   },
   programs: {
     sim: null,
@@ -35,8 +34,7 @@ const GLOBALS = {
 
 function initGlobals(gl) {
   GLOBALS.context.gl = gl;
-  GLOBALS.context.drawBuf = gl.getExtension("WEBGL_draw_buffers");
-  GLOBALS.context.texFloat = gl.getExtension("OES_texture_float");
+  GLOBALS.context.colorBufferFloat = gl.getExtension("EXT_color_buffer_float");
 
   GLOBALS.programs.sim = new Program({
     gl,
@@ -86,20 +84,20 @@ function createComputeTexture() {
   return tex;
 }
 
-function setTextureData(texture, format, type, width, height, data) {
+function setTextureData(texture, format, internalFormat, type, width, height, data) {
   const { gl } = GLOBALS.context;
   gl.bindTexture(gl.TEXTURE_2D, texture);
   /* eslint-disable no-multi-spaces */
   gl.texImage2D(
-    gl.TEXTURE_2D, // target
-    0,             // level
-    format,        // internal format
-    width,         // width
-    height,        // height
-    0,             // border
-    format,        // format
-    type,          // type
-    data,          // data
+    gl.TEXTURE_2D,  // target
+    0,              // level
+    internalFormat, // internal format
+    width,          // width
+    height,         // height
+    0,              // border
+    format,         // format
+    type,           // type
+    data,           // data
   );
   /* eslint-enable no-multi-spaces */
   gl.bindTexture(gl.TEXTURE_2D, null);
@@ -107,25 +105,25 @@ function setTextureData(texture, format, type, width, height, data) {
 
 class ComputeFramebuffer {
   constructor(positions, velocities, colors) {
-    const { gl, drawBuf } = GLOBALS.context;
+    const { gl } = GLOBALS.context;
 
     this.positionsTexture = createComputeTexture(gl);
     setTextureData(
-      this.positionsTexture, gl.RGB, gl.FLOAT,
+      this.positionsTexture, gl.RGBA, gl.RGBA32F, gl.FLOAT,
       PARTICLES_WIDTH, PARTICLES_HEIGHT,
       positions,
     );
 
     this.velocitiesTexture = createComputeTexture(gl);
     setTextureData(
-      this.velocitiesTexture, gl.RGB, gl.FLOAT,
+      this.velocitiesTexture, gl.RGBA, gl.RGBA32F, gl.FLOAT,
       PARTICLES_WIDTH, PARTICLES_HEIGHT,
       velocities,
     );
 
     this.colorsTexture = createComputeTexture(gl);
     setTextureData(
-      this.colorsTexture, gl.RGBA, gl.FLOAT,
+      this.colorsTexture, gl.RGBA, gl.RGBA32F, gl.FLOAT,
       PARTICLES_WIDTH, PARTICLES_HEIGHT,
       colors,
     );
@@ -133,22 +131,22 @@ class ComputeFramebuffer {
     this.framebuffer = gl.createFramebuffer();
     gl.bindFramebuffer(gl.FRAMEBUFFER, this.framebuffer);
     gl.framebufferTexture2D(
-      gl.FRAMEBUFFER, drawBuf.COLOR_ATTACHMENT0_WEBGL,
+      gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0,
       gl.TEXTURE_2D, this.positionsTexture, 0,
     );
     gl.framebufferTexture2D(
-      gl.FRAMEBUFFER, drawBuf.COLOR_ATTACHMENT1_WEBGL,
+      gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT1,
       gl.TEXTURE_2D, this.velocitiesTexture, 0,
     );
     gl.framebufferTexture2D(
-      gl.FRAMEBUFFER, drawBuf.COLOR_ATTACHMENT2_WEBGL,
+      gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT2,
       gl.TEXTURE_2D, this.colorsTexture, 0,
     );
 
-    drawBuf.drawBuffersWEBGL([
-      drawBuf.COLOR_ATTACHMENT0_WEBGL,
-      drawBuf.COLOR_ATTACHMENT1_WEBGL,
-      drawBuf.COLOR_ATTACHMENT2_WEBGL,
+    gl.drawBuffers([
+      gl.COLOR_ATTACHMENT0,
+      gl.COLOR_ATTACHMENT1,
+      gl.COLOR_ATTACHMENT2,
     ]);
 
     gl.bindFramebuffer(gl.FRAMEBUFFER, null);
@@ -262,8 +260,8 @@ export function particles(gl) {
   const du = 1.0 / PARTICLES_WIDTH;
   const dv = 1.0 / PARTICLES_HEIGHT;
 
-  const positions = new Float32Array(NUM_PARTICLES * 3);
-  const velocities = new Float32Array(NUM_PARTICLES * 3);
+  const positions = new Float32Array(NUM_PARTICLES * 4);
+  const velocities = new Float32Array(NUM_PARTICLES * 4);
   const colors = new Float32Array(NUM_PARTICLES * 4);
 
   for (let i = 0; i < PARTICLES_WIDTH; i += 1) {
@@ -273,13 +271,15 @@ export function particles(gl) {
       particleUVs[(elemIndex * 2) + 0] = du * i;
       particleUVs[(elemIndex * 2) + 1] = dv * j;
 
-      positions[(elemIndex * 3) + 0] = du * i;
-      positions[(elemIndex * 3) + 1] = dv * j;
-      positions[(elemIndex * 3) + 2] = 0.0;
+      positions[(elemIndex * 4) + 0] = du * i;
+      positions[(elemIndex * 4) + 1] = dv * j;
+      positions[(elemIndex * 4) + 2] = 0.0;
+      positions[(elemIndex * 4) + 3] = 1.0;
 
-      velocities[(elemIndex * 3) + 0] = -1.0;
-      velocities[(elemIndex * 3) + 1] = 0.0;
-      velocities[(elemIndex * 3) + 2] = 0.0;
+      velocities[(elemIndex * 4) + 0] = -1.0;
+      velocities[(elemIndex * 4) + 1] = 0.0;
+      velocities[(elemIndex * 4) + 2] = 0.0;
+      velocities[(elemIndex * 4) + 3] = 1.0;
 
       colors[(elemIndex * 4) + 0] = 1.0;
       colors[(elemIndex * 4) + 1] = 1.0;

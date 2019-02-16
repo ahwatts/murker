@@ -29,7 +29,7 @@ export function* startup() {
   const keyPressChannel = createKeyPressChannel();
   yield spawn(watchKeyPresses, keyPressChannel);
 
-  const gl = canvas.getContext("webgl") || canvas.getContext("experimental-webgl");
+  const gl = canvas.getContext("webgl2");
   yield put(RenderContext.Actions.createOpenGLContext(gl));
   gl.clearColor(0.0, 0.0, 0.0, 1.0);
   gl.enable(gl.DEPTH_TEST);

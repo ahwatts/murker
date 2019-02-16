@@ -1,9 +1,9 @@
-#version 100
+#version 300 es
 
-attribute vec3 position;
-attribute vec2 tex_coord;
+in vec3 position;
+in vec2 tex_coord;
 
-varying vec2 frag_tex_coord;
+out vec2 frag_tex_coord;
 
 void main(void) {
   frag_tex_coord = tex_coord;
