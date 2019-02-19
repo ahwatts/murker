@@ -10,6 +10,11 @@ const config = {
     publicPath: "/assets/",
     filename: "[name].js",
   },
+  externals: {
+    jquery: "jQuery",
+    react: "React",
+    "react-dom": "ReactDOM",
+  },
   module: {
     rules: [
       {

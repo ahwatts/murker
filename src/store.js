@@ -7,11 +7,11 @@ import rootReducer from "./redux";
 import rootSaga from "./sagas";
 import Misc from "./redux/misc_redux";
 
-const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ ?
-      window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__({
-        actionsBlacklist: [Misc.Types.UPDATE, Misc.Types.RENDER],
-      }) :
-      compose;
+let composeEnhancers = compose;
+if (window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__) {
+  composeEnhancers = { actionsBlacklist: [Misc.Types.UPDATE, Misc.Types.RENDER] };
+}
+
 const sagaMiddleware = createSagaMiddleware();
 
 const store = createStore(

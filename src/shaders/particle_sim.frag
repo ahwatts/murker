@@ -21,7 +21,7 @@ void main(void) {
   vec3 radius = cg - position0;
 
   vec3 force = (10.0 / dot(radius, radius)) * normalize(radius);
-  vec3 accel = force;
+  vec3 accel = 0.1 * force;
 
   vec3 velocity1 = velocity0 + (accel * dt);
   vec3 position1 = position0 + (velocity0 * dt) + (0.5 * accel * dt * dt);
