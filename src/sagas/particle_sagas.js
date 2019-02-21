@@ -1,37 +1,111 @@
 /* eslint no-bitwise: off */
 
-import { mat4, vec3 } from "gl-matrix";
-
 import Program from "../program";
-import Utils from "../utils";
 import particleDrawVertexSrc from "../shaders/particle_draw.vert";
 import particleDrawFragmentSrc from "../shaders/particle_draw.frag";
 import particleSimVertexSrc from "../shaders/particle_sim.vert";
-import particleSimFragmentSrc from "../shaders/particle_sim.frag";
-import texDebugVertexSrc from "../shaders/tex_debug.vert";
-import texDebugFragmentSrc from "../shaders/tex_debug.frag";
 
-const PARTICLES_WIDTH = 1024;
-const PARTICLES_HEIGHT = PARTICLES_WIDTH;
-const NUM_PARTICLES = PARTICLES_WIDTH * PARTICLES_HEIGHT;
+const NUM_PARTICLES = 1000;
+
 const GLOBALS = {
   context: {
     gl: null,
-    colorBufferFloat: null,
   },
   programs: {
     sim: null,
     draw: null,
-    texDebug: null,
   },
-  geometries: {
-    texSquare: {
-      vertices: null,
-      buffer: null,
-    },
+  particles: {
+    state: null,
+    buffers: [],
+    simVao: null,
+    drawVao: null,
   },
 };
 
+function initContext(gl) {
+  GLOBALS.context.gl = gl;
+}
+
+function initPrograms() {
+  const { gl } = GLOBALS.context;
+
+  GLOBALS.programs.sim = new Program({
+    gl,
+    sources: [gl.VERTEX_SHADER, particleSimVertexSrc],
+    preLinkStep(program) {
+      gl.transformFeedbackVaryings(
+        program,
+        [
+          "position1",
+          "velocity1",
+          "color1",
+        ],
+        gl.INTERLEAVED_ATTRIBS,
+      );
+    },
+  });
+
+  GLOBALS.programs.draw = new Program({
+    gl,
+    sources: [
+      [gl.VERTEX_SHADER, particleDrawVertexSrc],
+      [gl.FRAGMENT_SHADER, particleDrawFragmentSrc],
+    ],
+  });
+}
+
+function initParticles() {
+  const { gl } = GLOBALS.context;
+
+  const state = new Float32Array(NUM_PARTICLES * 10);
+  for (let i = 0; i < NUM_PARTICLES; i += 1) {
+    // Position
+    state[(i * 10) + 0] = 1.0 + (Math.floor(i / 10));
+    state[(i * 10) + 1] = 1.0 + (i % 10);
+    state[(i * 10) + 2] = 0.0;
+
+    // Velocity
+    state[(i * 10) + 3] = -1.0;
+    state[(i * 10) + 4] = 0.0;
+    state[(i * 10) + 5] = 0.0;
+
+    // Color
+    state[(i * 10) + 6] = 0.0;
+    state[(i * 10) + 7] = 0.0;
+    state[(i * 10) + 8] = 0.0;
+    state[(i * 10) + 9] = 1.0;
+  }
+
+  const buffers = [
+    gl.createBuffer(),
+    gl.createBuffer(),
+  ];
+
+  for (let i = 0; i < buffers.length; i += 1) {
+    gl.bindBuffer(gl.ARRAY_BUFFER, buffers[i]);
+    gl.bufferData(gl.ARRAY_BUFFER, state);
+    gl.bindBuffer(gl.ARRAY_BUFFER, null);
+  }
+
+  const simVao = gl.createVertexArray();
+  gl.bindVertexArray(simVao);
+
+  GLOBALS.particles = { state, buffers };
+}
+
+export function particles(gl) {
+  initContext(gl);
+  initPrograms();
+  initParticles();
+
+  return {
+    update() {},
+    render() {},
+  };
+}
+
+/*
 function initGlobals(gl) {
   GLOBALS.context.gl = gl;
   GLOBALS.context.colorBufferFloat = gl.getExtension("EXT_color_buffer_float");
@@ -54,7 +128,7 @@ function initGlobals(gl) {
     fragmentSource: texDebugFragmentSrc,
   });
 
-  /* eslint-disable no-multi-spaces, indent */
+  /* eslint-disable no-multi-spaces, indent * /
   GLOBALS.geometries.texSquare.vertices = Float32Array.from([
     -1.0, -1.0, 0.0,  0.0, 0.0,
      1.0,  1.0, 0.0,  1.0, 1.0,
@@ -64,7 +138,7 @@ function initGlobals(gl) {
     -1.0, -1.0, 0.0,  0.0, 0.0,
      1.0, -1.0, 0.0,  1.0, 0.0,
   ]);
-  /* eslint-enable no-multi-spaces, indent */
+  /* eslint-enable no-multi-spaces, indent * /
 
   GLOBALS.geometries.texSquare.buffer = gl.createBuffer();
   gl.bindBuffer(gl.ARRAY_BUFFER, GLOBALS.geometries.texSquare.buffer);
@@ -87,7 +161,7 @@ function createComputeTexture() {
 function setTextureData(texture, format, internalFormat, type, width, height, data) {
   const { gl } = GLOBALS.context;
   gl.bindTexture(gl.TEXTURE_2D, texture);
-  /* eslint-disable no-multi-spaces */
+  /* eslint-disable no-multi-spaces * /
   gl.texImage2D(
     gl.TEXTURE_2D,  // target
     0,              // level
@@ -99,7 +173,7 @@ function setTextureData(texture, format, internalFormat, type, width, height, da
     type,           // type
     data,           // data
   );
-  /* eslint-enable no-multi-spaces */
+  /* eslint-enable no-multi-spaces * /
   gl.bindTexture(gl.TEXTURE_2D, null);
 }
 
@@ -352,5 +426,6 @@ export function particles(gl) {
     },
   };
 }
+*/
 
 export default {};

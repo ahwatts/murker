@@ -7,7 +7,7 @@ import * as R from "ramda";
 import Program from "../src/program";
 import {
   manageLifetime,
-  testShaderSource,
+  testShaderSourceObject,
   withAValidWebGLContext,
 } from "./test_utils";
 
@@ -31,7 +31,7 @@ describe("Program", function () {
           create: () => {
             expect(fixture).to.be.null;
             expect(gl).to.exist;
-            fixture = new Program(R.merge({ gl }, testShaderSource));
+            fixture = new Program({ gl, sources: testShaderSourceObject(gl) });
           },
           destroy: () => {
             expect(fixture).to.respondTo("destroy");
@@ -75,7 +75,7 @@ describe("Program", function () {
           create: () => {
             expect(fixture).to.be.null;
             expect(gl).to.exist;
-            fixture = new Program(R.merge({ gl }, testShaderSource));
+            fixture = new Program({ gl, sources: testShaderSourceObject(gl) });
           },
           destroy: () => {
             expect(fixture).to.respondTo("destroy");
@@ -88,7 +88,7 @@ describe("Program", function () {
         });
 
         it("should render the WebGL program invalid", function () {
-          const program = fixture.program;
+          const { program } = fixture;
           expect(program).to.be.an.instanceOf(WebGLProgram);
           expect(gl.isProgram(program)).to.be.true;
           fixture.destroy();
@@ -96,7 +96,7 @@ describe("Program", function () {
         });
 
         it("should render the program's shaders invalid", function () {
-          const program = fixture.program;
+          const { program } = fixture;
           const shaders = gl.getAttachedShaders(program);
 
           expect(shaders).to.not.be.empty;

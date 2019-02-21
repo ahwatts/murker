@@ -29,7 +29,7 @@ class SpiralMesh extends Mesh {
   }
 
   createTextures() {
-    const gl = this.gl;
+    const { gl } = this;
 
     this.timeTexture = gl.createTexture();
     gl.bindTexture(gl.TEXTURE_2D, this.timeTexture);
@@ -92,8 +92,9 @@ class SpiralMesh extends Mesh {
   }
 
   updateTextureData(texture, width, height, bytes) {
-    const gl = this.gl;
+    const { gl } = this;
     gl.bindTexture(gl.TEXTURE_2D, texture);
+    /* eslint-disable no-multi-spaces */
     gl.texImage2D(
       gl.TEXTURE_2D,    // target
       0,                // level
@@ -105,10 +106,11 @@ class SpiralMesh extends Mesh {
       gl.UNSIGNED_BYTE, // type
       bytes,            // data
     );
+    /* eslint-enable no-multi-spaces */
   }
 
   createBuffers() {
-    const gl = this.gl;
+    const { gl } = this;
     this.texCoords = new Float32Array(FFT_SIZE);
     for (let i = 0; i < this.texCoords.length; i += 1) {
       this.texCoords[i] = i / FFT_SIZE;
@@ -120,7 +122,7 @@ class SpiralMesh extends Mesh {
   }
 
   setUpUniforms(matrices) {
-    const gl = this.gl;
+    const { gl } = this;
     super.setUpUniforms(matrices);
 
     const timeLocation = this.program.uniforms.time_domain;
@@ -144,7 +146,7 @@ class SpiralMesh extends Mesh {
   }
 
   draw() {
-    const gl = this.gl;
+    const { gl } = this;
 
     this.geometry.bindBuffers();
     this.geometry.setUpAttributes(this.program);

@@ -15,9 +15,8 @@ export function withAValidWebGLContext({ contextCreated, contextDestroyed, tests
 
     before(function () {
       return WebGLContext().then((context) => {
-        gl = context.gl;
-        canvas = context.canvas;
-        contextCreated(gl, canvas);
+        const { gl2, canvas2 } = context;
+        contextCreated(gl2, canvas2);
       });
     });
 
@@ -51,12 +50,14 @@ export function manageLifetime({ create, destroy, cleanup }) {
 
 export const octohedronPolyData = {
   vertex: [
+    /* eslint-disable object-curly-newline */
     { x:  1.0, y:  0.0, z:  0.0, red: 1.0, green: 0.0, blue: 0.0, alpha: 1.0 },
     { x: -1.0, y:  0.0, z:  0.0, red: 1.0, green: 0.0, blue: 0.0, alpha: 1.0 },
     { x:  0.0, y:  0.0, z:  1.0, red: 0.0, green: 0.0, blue: 1.0, alpha: 1.0 },
     { x:  0.0, y:  0.0, z: -1.0, red: 0.0, green: 0.0, blue: 1.0, alpha: 1.0 },
     { x:  0.0, y: -1.0, z:  0.0, red: 0.0, green: 1.0, blue: 0.0, alpha: 1.0 },
     { x:  0.0, y:  1.0, z:  0.0, red: 0.0, green: 1.0, blue: 0.0, alpha: 1.0 },
+    /* eslint-enable object-curly-newline */
   ],
   face: [
     [4, 0, 2],
@@ -71,8 +72,15 @@ export const octohedronPolyData = {
 };
 
 export const testShaderSource = {
-  vertexSource: testVertexShaderSource,
-  fragmentSource: testFragmentShaderSource,
+  vertex: testVertexShaderSource,
+  fragment: testFragmentShaderSource,
 };
+
+export function testShaderSourceObject(gl) {
+  return [
+    [gl.VERTEX_SHADER, testShaderSource.vertex],
+    [gl.FRAGMENT_SHADER, testShaderSource.fragment],
+  ];
+}
 
 export default {};

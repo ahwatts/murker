@@ -3,7 +3,7 @@ function WebGLContext() {
     function init() {
       let canvas = document.createElement("canvas");
       canvas = document.body.appendChild(canvas);
-      const gl = canvas.getContext("webgl") || canvas.getContext("experimental-webgl");
+      const gl = canvas.getContext("webgl2");
       resolve({ gl, canvas });
     }
 

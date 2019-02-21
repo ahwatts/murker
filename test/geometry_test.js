@@ -9,7 +9,7 @@ import Program from "../src/program";
 import {
   manageLifetime,
   octohedronPolyData,
-  testShaderSource,
+  testShaderSourceObject,
   withAValidWebGLContext,
 } from "./test_utils";
 
@@ -36,17 +36,17 @@ describe("Geometry", function () {
         });
 
         it("should have a vertices member that is an array of objects with coordinates",
-           function () {
-             const geo = geoFn();
-             expect(geo).to.have.property("vertices");
-             expect(geo.vertices).to.exist;
-             expect(geo.vertices).to.be.instanceOf(Array);
-             R.forEach((v) => {
-               expect(v).to.have.property("position").that.is.an.instanceOf(Float32Array);
-               expect(v).to.have.property("color").that.is.an.instanceOf(Float32Array);
-               expect(v).to.not.have.property("normal");
-             }, geo.vertices);
-           });
+          function () {
+            const geo = geoFn();
+            expect(geo).to.have.property("vertices");
+            expect(geo.vertices).to.exist;
+            expect(geo.vertices).to.be.instanceOf(Array);
+            R.forEach((v) => {
+              expect(v).to.have.property("position").that.is.an.instanceOf(Float32Array);
+              expect(v).to.have.property("color").that.is.an.instanceOf(Float32Array);
+              expect(v).to.not.have.property("normal");
+            }, geo.vertices);
+          });
       }
 
       function descriptionExpectations(geoFn) {
@@ -276,7 +276,7 @@ describe("Geometry", function () {
           create: () => {
             expect(program).to.be.null;
             expect(gl).to.exist;
-            program = new Program(R.merge({ gl }, testShaderSource));
+            program = new Program({ gl, sources: testShaderSourceObject(gl) });
           },
           destroy: () => {
             if (program !== null) {

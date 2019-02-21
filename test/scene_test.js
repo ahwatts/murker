@@ -13,7 +13,7 @@ import {
   withAValidWebGLContext,
   manageLifetime,
   octohedronPolyData,
-  testShaderSource,
+  testShaderSourceObject,
 } from "./test_utils";
 
 describe("Scene", function () {
@@ -65,7 +65,7 @@ describe("Scene", function () {
           expect(fixtureData.mesh, "Mesh fixture").to.be.null;
           expect(gl).to.exist;
           fixtureData.geometry = new Geometry(R.merge({ gl }, octohedronPolyData));
-          fixtureData.program = new Program(R.merge({ gl }, testShaderSource));
+          fixtureData.program = new Program({ gl, sources: testShaderSourceObject(gl) });
           fixtureData.mesh = new Mesh(R.merge({ gl }, fixtureData));
         },
         destroy: () => {

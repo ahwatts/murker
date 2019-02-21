@@ -15,10 +15,15 @@ function createShader(gl, type, source) {
   return shader;
 }
 
-function createProgram(gl, vertexShader, fragmentShader) {
+function createProgram(gl, shaders, preLinkStep) {
   let program = gl.createProgram();
-  gl.attachShader(program, vertexShader);
-  gl.attachShader(program, fragmentShader);
+
+  R.forEach(shader => gl.attachShader(program, shader), shaders);
+
+  if (!R.isNil(preLinkStep)) {
+    preLinkStep(program);
+  }
+
   gl.linkProgram(program);
   if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
     const log = gl.getProgramInfoLog(program);
@@ -30,15 +35,15 @@ function createProgram(gl, vertexShader, fragmentShader) {
 }
 
 class Program {
-  constructor({ gl, vertexSource, fragmentSource }) {
+  constructor({ gl, sources, preLinkStep }) {
     this.gl = gl;
 
-    this.program = createProgram(
-      gl,
-      createShader(gl, gl.VERTEX_SHADER, vertexSource),
-      createShader(gl, gl.FRAGMENT_SHADER, fragmentSource),
+    const shaders = R.map(
+      ([type, src]) => createShader(gl, type, src),
+      sources,
     );
 
+    this.program = createProgram(gl, shaders, preLinkStep);
     this.attributes = {};
     this.uniforms = {};
 
@@ -57,8 +62,7 @@ class Program {
   }
 
   destroy() {
-    const gl = this.gl;
-    const program = this.program;
+    const { gl, program } = this;
     this.program = null;
 
     gl.useProgram(null);

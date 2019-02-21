@@ -25,13 +25,14 @@ class Scene {
       Math.PI / 6.0,
       this.viewport.width / this.viewport.height,
       0.1,
-      100.0);
+      100.0,
+    );
   }
 
   render() {
     const view = this.camera.getViewTransform();
     const viewInv = mat4.create();
-    const projection = this.projection;
+    const { projection } = this;
     mat4.invert(viewInv, view);
 
     this.meshes.forEach((m) => {
