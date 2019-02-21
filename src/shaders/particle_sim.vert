@@ -6,6 +6,7 @@ layout(location = 2) in vec4 color0;
 
 uniform vec3 cg_position;
 uniform float cg_mass;
+uniform float dt;
 
 out vec3 position1;
 out vec3 velocity1;

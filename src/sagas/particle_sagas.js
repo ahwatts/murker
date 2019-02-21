@@ -4,6 +4,7 @@ import Program from "../program";
 import particleDrawVertexSrc from "../shaders/particle_draw.vert";
 import particleDrawFragmentSrc from "../shaders/particle_draw.frag";
 import particleSimVertexSrc from "../shaders/particle_sim.vert";
+import particleSimFragmentSrc from "../shaders/particle_sim.frag";
 
 const NUM_PARTICLES = 1000;
 
@@ -18,8 +19,6 @@ const GLOBALS = {
   particles: {
     state: null,
     buffers: [],
-    simVao: null,
-    drawVao: null,
   },
 };
 
@@ -32,7 +31,10 @@ function initPrograms() {
 
   GLOBALS.programs.sim = new Program({
     gl,
-    sources: [gl.VERTEX_SHADER, particleSimVertexSrc],
+    sources: [
+      [gl.VERTEX_SHADER, particleSimVertexSrc],
+      [gl.FRAGMENT_SHADER, particleSimFragmentSrc],
+    ],
     preLinkStep(program) {
       gl.transformFeedbackVaryings(
         program,
@@ -78,20 +80,38 @@ function initParticles() {
   }
 
   const buffers = [
-    gl.createBuffer(),
-    gl.createBuffer(),
+    {
+      buf: gl.createBuffer(),
+      vao: gl.createVertexArray(),
+    },
+    {
+      buf: gl.createBuffer(),
+      vao: gl.createVertexArray(),
+    },
   ];
 
   for (let i = 0; i < buffers.length; i += 1) {
-    gl.bindBuffer(gl.ARRAY_BUFFER, buffers[i]);
-    gl.bufferData(gl.ARRAY_BUFFER, state);
+    gl.bindVertexArray(buffers[i].vao);
+    gl.bindBuffer(gl.ARRAY_BUFFER, buffers[i].buf);
+    gl.bufferData(gl.ARRAY_BUFFER, state, gl.DYNAMIC_DRAW);
+    // Position.
+    gl.enableVertexAttribArray(0);
+    gl.vertexAttribPointer(0, 3, gl.FLOAT, gl.FALSE, 40, 0);
+    // Velocity.
+    gl.enableVertexAttribArray(1);
+    gl.vertexAttribPointer(1, 3, gl.FLOAT, gl.FALSE, 40, 12);
+    // Color.
+    gl.enableVertexAttribArray(2);
+    gl.vertexAttribPointer(2, 4, gl.FLOAT, gl.FALSE, 40, 24);
+    gl.bindVertexArray(null);
     gl.bindBuffer(gl.ARRAY_BUFFER, null);
   }
 
-  const simVao = gl.createVertexArray();
-  gl.bindVertexArray(simVao);
 
-  GLOBALS.particles = { state, buffers };
+  GLOBALS.particles = {
+    state,
+    buffers,
+  };
 }
 
 export function particles(gl) {
@@ -99,8 +119,35 @@ export function particles(gl) {
   initPrograms();
   initParticles();
 
+  let srcBuffer = GLOBALS.particles.buffers[0];
+  let dstBuffer = GLOBALS.particles.buffers[1];
+
   return {
-    update() {},
+    update() {
+      const program = GLOBALS.programs.sim;
+
+      gl.enable(gl.RASTERIZER_DISCARD);
+      gl.useProgram(program.program);
+      gl.bindVertexArray(srcBuffer.vao);
+      gl.bindBufferBase(gl.TRANSFORM_FEEDBACK_BUFFER, 0, dstBuffer.buf);
+      gl.beginTransformFeedback(gl.POINTS);
+
+      gl.uniform3f(program.uniforms.cg_position, -1.0, -1.0, -1.0);
+      gl.uniform1f(program.uniforms.cg_mass, 10.0);
+      gl.uniform1f(program.uniforms.dt, 0.0167);
+      gl.drawArrays(gl.POINTS, 0, NUM_PARTICLES);
+
+      gl.endTransformFeedback();
+      gl.bindBufferBase(gl.TRANSFORM_FEEDBACK_BUFFER, 0, null);
+      gl.bindVertexArray(null);
+      gl.useProgram(null);
+      gl.disable(gl.RASTERIZER_DISCARD);
+
+      const tmp = srcBuffer;
+      srcBuffer = dstBuffer;
+      dstBuffer = tmp;
+    },
+
     render() {},
   };
 }
