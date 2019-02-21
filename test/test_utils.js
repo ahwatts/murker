@@ -15,8 +15,11 @@ export function withAValidWebGLContext({ contextCreated, contextDestroyed, tests
 
     before(function () {
       return WebGLContext().then((context) => {
-        const { gl2, canvas2 } = context;
-        contextCreated(gl2, canvas2);
+        /* eslint-disable prefer-destructuring */
+        gl = context.gl;
+        canvas = context.canvas;
+        /* eslint-enable prefer-destructuring */
+        contextCreated(gl, canvas);
       });
     });
 
