@@ -1,10 +1,27 @@
-/dist
+# Node / NPM cruft.
 /node_modules
 npm-debug.log
-.dir-locals.el
+
+# New yarn cruft.
+/.yarn/*
+!/.yarn/releases
+!/.yarn/plugins
+!/.yarn/sdks
+!/.yarn/versions
+/.pnp.*
+
+# Mac cruft.
 .DS_Store
-/.projectile
-/public/**/*.mp3
-/server/index
-/server/.ruby-*
+
+# Emacs cruft
+.dir-locals.el
+.projectile
+
+# VSCode cruft.
 /.vscode
+
+# Actual project stuff to ignore.
+/dist
+/public/**/*.mp3
+/server/.ruby-*
+/server/index
