@@ -6,9 +6,7 @@ const config = {
     murker: ["@babel/polyfill", "./src/murker.js"],
   },
   output: {
-    path: path.resolve(__dirname, "dist"),
     publicPath: "/assets/",
-    filename: "[name].js",
   },
   externals: {
     jquery: "jQuery",
@@ -61,14 +59,14 @@ const config = {
           {
             loader: "file-loader",
             options: {
-              name: "fonts/[name]-[hash].[ext]",
+              name: "fonts/[name]-[contentHash].[ext]",
             },
           },
         ],
       },
     ],
   },
-  devtool: "sourcemap",
+  devtool: "source-map",
   devServer: {
     contentBase: "./public",
     publicPath: "/assets/",
