@@ -164,8 +164,10 @@ export function spiral(gl) {
 
   const program = new Program({
     gl,
-    vertexSource: spiralVertexSrc,
-    fragmentSource: spiralFragmentSrc,
+    sources: [
+      [gl.VERTEX_SHADER, spiralVertexSrc],
+      [gl.FRAGMENT_SHADER, spiralFragmentSrc],
+    ],
   });
 
   const mesh = new SpiralMesh({ gl, geometry, program });

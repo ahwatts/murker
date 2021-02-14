@@ -13,8 +13,10 @@ export function octo(gl) {
 
   const program = new Program({
     gl,
-    vertexSource: unlitVertexSrc,
-    fragmentSource: unlitFragmentSrc,
+    sources: [
+      [gl.VERTEX_SHADER, unlitVertexSrc],
+      [gl.FRAGMENT_SHADER, unlitFragmentSrc],
+    ],
   });
 
   const geometry = Geometry.octohedron({ gl });
