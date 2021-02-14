@@ -25,3 +25,5 @@ npm-debug.log
 /public/**/*.mp3
 /server/.ruby-*
 /server/index
+/server/.bundle
+/server/vendor

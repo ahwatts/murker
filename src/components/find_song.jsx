@@ -4,7 +4,6 @@ import * as R from "ramda";
 import React from "react";
 import { connect } from "react-redux";
 import { withRouter } from "react-router";
-
 import KeyPress from "../redux/keypress_redux";
 import Search from "../redux/search_redux";
 import Song from "../redux/song_redux";
@@ -37,7 +36,7 @@ class SongFinder extends React.PureComponent {
   }
 
   render() {
-    const results = this.props.results.toJS();
+    const results = this.props.results;
 
     let resultList = null;
     if (!Utils.isBlank(results)) {
