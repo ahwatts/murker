@@ -10,11 +10,11 @@ delete webpackConfig.entry;
 module.exports = function (config) {
   config.set({
     plugins: [
-      'karma-chrome-launcher',
-      'karma-firefox-launcher',
-      'karma-mocha',
-      'karma-mocha-reporter',
-      'karma-webpack',
+      "karma-chrome-launcher",
+      "karma-firefox-launcher",
+      "karma-mocha",
+      "karma-mocha-reporter",
+      "karma-webpack",
     ],
     frameworks: ["mocha"],
     files: [
