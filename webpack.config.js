@@ -1,5 +1,3 @@
-const path = require("path");
-
 const config = {
   mode: "development",
   entry: {
@@ -55,14 +53,7 @@ const config = {
       {
         test: /\.(eot|svg|ttf|woff|woff2)$/,
         exclude: /node_modules/,
-        use: [
-          {
-            loader: "file-loader",
-            options: {
-              name: "fonts/[name]-[contentHash].[ext]",
-            },
-          },
-        ],
+        type: "asset/resource",
       },
     ],
   },

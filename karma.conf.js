@@ -9,6 +9,13 @@ delete webpackConfig.entry;
 
 module.exports = function (config) {
   config.set({
+    plugins: [
+      'karma-chrome-launcher',
+      'karma-firefox-launcher',
+      'karma-mocha',
+      'karma-mocha-reporter',
+      'karma-webpack',
+    ],
     frameworks: ["mocha"],
     files: [
       "test/*_test.js",
@@ -25,7 +32,7 @@ module.exports = function (config) {
     autoWatch: true,
     browsers: [
       "Chrome",
-      // "Firefox",
+      "Firefox",
     ],
     singleRun: false,
     concurrency: Infinity,
