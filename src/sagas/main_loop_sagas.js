@@ -1,9 +1,8 @@
 /* eslint no-bitwise: off, no-constant-condition: off, no-param-reassign: off */
 
 import RenderContext from "../redux/render_context_redux";
-import store from "../store";
 
-export function doFrame(canvas, gl, onUpdate, onRender) {
+export function doFrame(canvas, store, gl, onUpdate, onRender) {
   onUpdate();
 
   const width = document.documentElement.clientWidth;
@@ -23,9 +22,9 @@ export function doFrame(canvas, gl, onUpdate, onRender) {
   onRender();
 }
 
-export function startMainLoop(canvas, gl, onUpdate, onRender) {
+export function startMainLoop(canvas, store, gl, onUpdate, onRender) {
   const wrappedDoFrame = () => {
-    doFrame(canvas, gl, onUpdate, onRender);
+    doFrame(canvas, store, gl, onUpdate, onRender);
     requestAnimationFrame(wrappedDoFrame);
   };
   wrappedDoFrame();

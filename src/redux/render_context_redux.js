@@ -12,8 +12,8 @@ const Types = R.indexBy(R.identity, [
 ]);
 
 const Actions = {
-  createCanvas: canvas => ({ type: Types.CREATE_CANVAS, canvas }),
-  createOpenGLContext: gl => ({ type: Types.CREATE_OPENGL_CONTEXT, gl }),
+  createCanvas: (canvas) => ({ type: Types.CREATE_CANVAS, canvas }),
+  createOpenGLContext: (gl) => ({ type: Types.CREATE_OPENGL_CONTEXT, gl }),
   createOpenGLExtension: (name, ext) => ({ type: Types.CREATE_OPENGL_EXTENSION, name, ext }),
   resizeCanvas: (width, height) => ({ type: Types.RESIZE_CANVAS, width, height }),
   resizeCompleted: () => ({ type: Types.RESIZE_COMPLETED }),
@@ -24,7 +24,7 @@ const Reducers = {
   createOpenGLContext: (state, { gl }) => state.merge({ gl }),
   createOpenGLExtension: (state, { name, ext }) => state.merge({ [name]: ext }),
   resizeCanvas: (state, { width, height }) => state.merge({ width, height, resize: true }),
-  resizeCompleted: state => state.set("resize", false),
+  resizeCompleted: (state) => state.set("resize", false),
 };
 
 function rootReducer(state, action) {

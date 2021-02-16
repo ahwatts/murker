@@ -10,19 +10,19 @@ const Types = R.indexBy(R.identity, [
 ]);
 
 const Actions = {
-  findSongQuery: query => ({ type: Types.FIND_SONG_QUERY, query }),
-  findSongResults: results => ({ type: Types.FIND_SONG_RESULTS, results }),
-  findSongError: error => ({ type: Types.FIND_SONG_ERROR, error }),
+  findSongQuery: (query) => ({ type: Types.FIND_SONG_QUERY, query }),
+  findSongResults: (results) => ({ type: Types.FIND_SONG_RESULTS, results }),
+  findSongError: (error) => ({ type: Types.FIND_SONG_ERROR, error }),
 };
 
 const Reducers = {
-  findSongQuery: (state, { query }) => state.update("findSong", state2 => (
+  findSongQuery: (state, { query }) => state.update("findSong", (state2) => (
     state2.merge({ fetching: true, query })
   )),
-  findSongResults: (state, { results }) => state.update("findSong", state2 => (
+  findSongResults: (state, { results }) => state.update("findSong", (state2) => (
     state2.merge({ fetching: false, results })
   )),
-  findSongError: (state, { error }) => state.update("findSong", state2 => (
+  findSongError: (state, { error }) => state.update("findSong", (state2) => (
     state2.merge({ fetching: false, results: [], error })
   )),
 };

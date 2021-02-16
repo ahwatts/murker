@@ -1,12 +1,11 @@
 import Geometry from "../geometry";
 import Mesh from "../mesh";
 import Program from "../program";
-import Scene from "../scene";
 import Song from "../redux/song_redux";
-import Store from "../store";
-import Utils from "../utils";
+import Scene from "../scene";
 import spiralFragmentSrc from "../shaders/spiral.frag";
 import spiralVertexSrc from "../shaders/spiral.vert";
+import Utils from "../utils";
 import { FFT_SIZE } from "./song_sagas";
 
 const TIME_DOMAIN_LENGTH = FFT_SIZE;
@@ -158,7 +157,7 @@ class SpiralMesh extends Mesh {
   }
 }
 
-export function spiral(gl) {
+export function spiral(store, gl) {
   const geometry = Geometry.cube({ gl });
   geometry.createBuffers();
 
@@ -178,7 +177,7 @@ export function spiral(gl) {
 
   return {
     update() {
-      const pipeline = Song.Selectors.getAudioPipeline(Store.getState()).toJS();
+      const pipeline = Song.Selectors.getAudioPipeline(store.getState()).toJS();
       if (pipeline && pipeline.analyzers) {
         mesh.updateTextures(pipeline.analyzers);
       }

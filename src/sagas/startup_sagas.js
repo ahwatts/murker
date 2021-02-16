@@ -1,24 +1,15 @@
-import React from "react";
-import ReactDOM from "react-dom";
 import { put, spawn } from "redux-saga/effects";
-
 import RenderContext from "../redux/render_context_redux";
-import Root from "../components/root";
 import { createKeyPressChannel, watchKeyPresses } from "./keypress_sagas";
+import { startMainLoop } from "./main_loop_sagas";
 import { createResizeChannel, watchResize } from "./resize_sagas";
+import { spiral } from "./spiral_sagas";
+
 // import { octo } from "./octo_sagas";
 // import { particles } from "./particle_sagas";
-import { spiral } from "./spiral_sagas";
-import { startMainLoop } from "./main_loop_sagas";
 
-export function* startup() {
-  let canvas = document.createElement("canvas");
-  canvas = document.body.appendChild(canvas);
+export function* startup({ canvas, store }) {
   yield put(RenderContext.Actions.createCanvas(canvas));
-
-  let chooser = document.createElement("div");
-  chooser = document.body.appendChild(chooser);
-  ReactDOM.render(React.createElement(Root), chooser);
 
   const width = document.documentElement.clientWidth;
   const height = document.documentElement.clientHeight;
@@ -36,8 +27,8 @@ export function* startup() {
 
   // const { update, render } = octo(gl);
   // const { update, render } = particles(gl);
-  const { update, render } = spiral(gl);
-  startMainLoop(canvas, gl, update, render);
+  const { update, render } = spiral(store, gl);
+  startMainLoop(canvas, store, gl, update, render);
 }
 
 export default {};
