@@ -17,7 +17,7 @@ class Mesh {
   }
 
   setUpUniforms({ projection, view, viewInv }) {
-    const gl = this.gl;
+    const { gl } = this;
 
     if (this.program.uniforms.projection && projection) {
       gl.uniformMatrix4fv(this.program.uniforms.projection, false, projection);

@@ -3,7 +3,6 @@
 import PropTypes from "prop-types";
 import React from "react";
 import { connect } from "react-redux";
-
 import Song from "../redux/song_redux";
 
 class Player extends React.Component {
@@ -11,26 +10,28 @@ class Player extends React.Component {
     super(props);
     this.state = {
       currentSong: null,
-      status: "stopped",
+      // status: "stopped",
     };
   }
 
   componentWillReceiveProps(newProps) {
-    if (newProps.currentSong && this.state.currentSong &&
-        newProps.currentSong.get("id") !== this.state.currentSong.id) {
+    const { currentSong: newCurrentSong } = newProps;
+    const { currentSong: oldCurrentSong } = this.state;
+    if (newCurrentSong && oldCurrentSong
+      && newCurrentSong.get("id") !== oldCurrentSong.id) {
       this.setState({
         currentSong: newProps.currentSong.toJS(),
-        status: "playing",
+        // status: "playing",
       }, this.playCurrentSong);
-    } else if (!this.state.currentSong && newProps.currentSong) {
+    } else if (!oldCurrentSong && newCurrentSong) {
       this.setState({
-        currentSong: newProps.currentSong.toJS(),
-        status: "playing",
+        currentSong: newCurrentSong.toJS(),
+        // status: "playing",
       }, this.playCurrentSong);
-    } else if (this.state.currentSong && !newProps.currentSong) {
+    } else if (oldCurrentSong && !newCurrentSong) {
       this.setState({
         currentSong: null,
-        status: "stopped",
+        // status: "stopped",
       });
     }
   }
@@ -38,29 +39,40 @@ class Player extends React.Component {
   setAudioRef = (elem) => { this.audio = elem; }
 
   playCurrentSong = () => {
-    this.props.playSong(this.state.currentSong, this.audio);
+    const { playSong } = this.props;
+    const { currentSong } = this.state;
+    playSong(currentSong, this.audio);
+  }
+
+  handleKeyPress = ({ key }) => {
+    if (key === " ") {
+      this.playCurrentSong();
+    }
   }
 
   renderButtons() {
     return (
       <span className="icon-play3"
+            aria-label="Play"
             role="button"
             tabIndex={0}
-            onClick={this.playCurrentSong} />
+            onClick={this.playCurrentSong}
+            onKeyPress={this.handleKeyPress} />
     );
   }
 
   render() {
-    if (this.state.currentSong) {
+    const { currentSong } = this.state;
+    if (currentSong) {
       return (
         <div id="player-controls">
-          <audio src={this.state.currentSong.url}
-                 key={this.state.currentSong.id}
+          <audio src={currentSong.url}
+                 key={currentSong.id}
                  controls={false}
                  crossOrigin="anonymous"
                  ref={this.setAudioRef} />
           {this.renderButtons()}
-          {this.state.currentSong.name}
+          {currentSong.name}
         </div>
       );
     }

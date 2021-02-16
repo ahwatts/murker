@@ -107,7 +107,6 @@ function initParticles() {
     gl.bindBuffer(gl.ARRAY_BUFFER, null);
   }
 
-
   GLOBALS.particles = {
     state,
     buffers,

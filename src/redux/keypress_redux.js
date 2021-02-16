@@ -9,8 +9,8 @@ const Types = R.indexBy(R.identity, [
 ]);
 
 const Actions = {
-  keyDown: key => ({ type: Types.KEY_DOWN, key }),
-  keyUp: key => ({ type: Types.KEY_UP, key }),
+  keyDown: (key) => ({ type: Types.KEY_DOWN, key }),
+  keyUp: (key) => ({ type: Types.KEY_UP, key }),
 };
 
 const Reducers = {

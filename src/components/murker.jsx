@@ -14,12 +14,12 @@ function Murker({ dimensions }) {
     <Router>
       <div id="murker-root" style={dimensions}>
         <div id="nav-bar">
-          <Link to={"/"}>Home</Link>
-          <Link to={"/find_song"}>Find Song</Link>
+          <Link to="/">Home</Link>
+          <Link to="/find_song">Find Song</Link>
         </div>
 
         <div id="main">
-          <Route path={"/find_song"} component={FindSong} />
+          <Route path="/find_song" component={FindSong} />
         </div>
 
         <div id="player">

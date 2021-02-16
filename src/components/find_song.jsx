@@ -7,25 +7,29 @@ import { withRouter } from "react-router";
 import KeyPress from "../redux/keypress_redux";
 import Search from "../redux/search_redux";
 import Song from "../redux/song_redux";
-import Utils from "../utils";
+import { isBlank } from "../utils";
 
 class SongFinder extends React.PureComponent {
   componentWillReceiveProps(newProps) {
-    if (!this.props.quitKeyDown && newProps.quitKeyDown) {
-      this.props.history.goBack();
+    const { quitKeyDown: newQuitKeyDown, history } = newProps;
+    const { quitKeyDown: oldQuitKeyDown } = this.props;
+    if (!oldQuitKeyDown && newQuitKeyDown) {
+      history.goBack();
     }
   }
 
   handleQueryChange = (event) => {
-    this.props.setQuery(event.target.value);
+    const { setQuery } = this.props;
+    setQuery(event.target.value);
   }
 
   handleSongSelect = (event) => {
+    const { results, playSong, history } = this.props;
     const songId = parseInt(event.currentTarget.dataset.songId, 10);
-    const song = this.props.results.find(s => s.get("id") === songId);
+    const song = results.find((s) => s.get("id") === songId);
     if (song) {
-      this.props.playSong(song);
-      this.props.history.goBack();
+      playSong(song);
+      history.goBack();
     }
   }
 
@@ -36,13 +40,13 @@ class SongFinder extends React.PureComponent {
   }
 
   render() {
-    const results = this.props.results;
+    const { results, isFetching, query } = this.props;
 
     let resultList = null;
-    if (!Utils.isBlank(results)) {
+    if (!isBlank(results)) {
       resultList = R.pipe(
         R.take(10),
-        R.map(song => (
+        R.map((song) => (
           <div className="song-result"
                role="button"
                tabIndex={0}
@@ -54,7 +58,7 @@ class SongFinder extends React.PureComponent {
           </div>
         )),
       )(results);
-    } else if (this.props.isFetching) {
+    } else if (isFetching) {
       resultList = "... Searching ...";
     }
 
@@ -63,7 +67,7 @@ class SongFinder extends React.PureComponent {
         <div className="modal-outer-window">
           <div className="modal-inner-window">
             Search for song
-            <input type="text" value={this.props.query} onChange={this.handleQueryChange} />
+            <input type="text" value={query} onChange={this.handleQueryChange} />
             {resultList}
           </div>
         </div>
@@ -97,8 +101,8 @@ function mapStateToProps(state) {
 
 function mapDispatchToProps(dispatch) {
   return {
-    setQuery: query => dispatch(Search.Actions.findSongQuery(query)),
-    playSong: song => dispatch(Song.Actions.setNowPlayingSong(song)),
+    setQuery: (query) => dispatch(Search.Actions.findSongQuery(query)),
+    playSong: (song) => dispatch(Song.Actions.setNowPlayingSong(song)),
   };
 }
 

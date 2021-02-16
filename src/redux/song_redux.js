@@ -11,8 +11,8 @@ const Types = R.indexBy(R.identity, [
 
 const Actions = {
   playSong: (song, audio) => ({ type: Types.PLAY_SONG, song, audio }),
-  setAudioPipeline: nodes => ({ type: Types.SET_AUDIO_PIPELINE, nodes }),
-  setNowPlayingSong: song => ({ type: Types.SET_NOW_PLAYING_SONG, song }),
+  setAudioPipeline: (nodes) => ({ type: Types.SET_AUDIO_PIPELINE, nodes }),
+  setNowPlayingSong: (song) => ({ type: Types.SET_NOW_PLAYING_SONG, song }),
 };
 
 const Reducers = {

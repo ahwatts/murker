@@ -18,7 +18,7 @@ function createShader(gl, type, source) {
 function createProgram(gl, shaders, preLinkStep) {
   let program = gl.createProgram();
 
-  R.forEach(shader => gl.attachShader(program, shader), shaders);
+  R.forEach((shader) => gl.attachShader(program, shader), shaders);
 
   if (!R.isNil(preLinkStep)) {
     preLinkStep(program);

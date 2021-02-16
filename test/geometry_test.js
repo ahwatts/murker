@@ -32,7 +32,7 @@ describe("Geometry", function () {
           expect(geo).to.have.property("elements");
           expect(geo.elements).to.exist;
           expect(geo.elements).to.be.instanceOf(Array);
-          R.forEach(e => expect(e).to.be.a("number"), geo.elements);
+          R.forEach((e) => expect(e).to.be.a("number"), geo.elements);
         });
 
         it("should have a vertices member that is an array of objects with coordinates",

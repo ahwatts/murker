@@ -5,7 +5,7 @@ import Song from "../redux/song_redux";
 import Scene from "../scene";
 import spiralFragmentSrc from "../shaders/spiral.frag";
 import spiralVertexSrc from "../shaders/spiral.vert";
-import Utils from "../utils";
+import { getDimensions } from "../utils";
 import { FFT_SIZE } from "./song_sagas";
 
 const TIME_DOMAIN_LENGTH = FFT_SIZE;
@@ -171,7 +171,7 @@ export function spiral(store, gl) {
 
   const mesh = new SpiralMesh({ gl, geometry, program });
 
-  const { canvasWidth, canvasHeight } = Utils.getDimensions();
+  const { canvasWidth, canvasHeight } = getDimensions();
   const scene = new Scene({ gl, canvasWidth, canvasHeight });
   scene.addMesh(mesh);
 
@@ -202,7 +202,7 @@ export function spiral(store, gl) {
     },
 
     render() {
-      const { width, height } = Utils.getDimensions();
+      const { width, height } = getDimensions();
       scene.setViewport(width, height);
       scene.render();
     },

@@ -25,9 +25,9 @@ module.exports = {
         },
       },
     ],
-    "react/jsx-first-prop-new-line": "off",
     "react/jsx-closing-bracket-location": "off",
-    "react/jsx-indent-props": "off",
+    "react/jsx-first-prop-new-line": ["error", "never"],
+    "react/jsx-indent-props": ["error", "first"],
     "no-unused-vars": [
       "error",
       {
@@ -36,4 +36,12 @@ module.exports = {
       },
     ],
   },
+  overrides: [
+    {
+      files: ["**/*.jsx"],
+      rules: {
+        indent: "off",
+      },
+    },
+  ],
 };

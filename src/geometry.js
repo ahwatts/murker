@@ -2,7 +2,7 @@
 
 import * as R from "ramda";
 
-const plyAttribToArray = keys => R.pipe(
+const plyAttribToArray = (keys) => R.pipe(
   R.props(keys),
   R.filter(R.complement(R.isNil)),
 );
@@ -20,8 +20,8 @@ const plyAttributes = [
 function plyVertexToArray(vertex) {
   return R.fromPairs(
     R.filter(
-      p => R.last(p).length > 0,
-      R.map(f => f(vertex), plyAttributes),
+      (p) => R.last(p).length > 0,
+      R.map((f) => f(vertex), plyAttributes),
     ),
   );
 }

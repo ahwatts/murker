@@ -1,9 +1,8 @@
 import * as R from "ramda";
 import { call, put, select } from "redux-saga/effects";
-
 import FindSong from "../redux/search_redux";
 import Song from "../redux/song_redux";
-import Utils from "../utils";
+import { isBlank } from "../utils";
 
 const AudioContext = window.AudioContext || window.webkitAudioContext;
 
@@ -47,11 +46,11 @@ export function* playSong({ audio }) {
   // previous pipeline pipeline should get gc'd once the new pipeline
   // is stored to the redux.
   const oldPipeline = (yield select(Song.Selectors.getAudioPipeline)).toJS();
-  if (!Utils.isBlank(oldPipeline)) {
+  if (!isBlank(oldPipeline)) {
     oldPipeline.merger.disconnect();
   }
 
-  const context = Utils.isBlank(oldPipeline) ? new AudioContext() : oldPipeline.context;
+  const context = isBlank(oldPipeline) ? new AudioContext() : oldPipeline.context;
   const source = context.createMediaElementSource(audio);
   const splitter = context.createChannelSplitter();
   const merger = context.createChannelMerger();
