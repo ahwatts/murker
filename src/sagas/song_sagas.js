@@ -1,3 +1,4 @@
+import Immutable from "immutable";
 import * as R from "ramda";
 import { call, put, select } from "redux-saga/effects";
 import FindSong from "../redux/search_redux";
@@ -29,7 +30,7 @@ export function* findSong(api, { query }) {
       const response = yield call([api, "findSong"], query);
       if (response.ok) {
         const body = yield call([response, "json"]);
-        yield put(FindSong.Actions.findSongResults(body.results));
+        yield put(FindSong.Actions.findSongResults(Immutable.fromJS(body.results)));
       } else {
         const error = R.path(["error", "message"], response.json());
         yield put(FindSong.Actions.findSongError(error));
@@ -66,9 +67,9 @@ export function* playSong({ audio }) {
   merger.connect(context.destination);
   audio.play();
 
-  yield put(Song.Actions.setAudioPipeline({
+  yield put(Song.Actions.setAudioPipeline(Immutable.fromJS({
     context, source, splitter, merger, analyzers,
-  }));
+  })));
 }
 
 export default {};

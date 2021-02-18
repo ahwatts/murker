@@ -10,9 +10,9 @@ import Song from "../redux/song_redux";
 import { isBlank } from "../utils";
 
 class SongFinder extends React.PureComponent {
-  componentWillReceiveProps(newProps) {
-    const { quitKeyDown: newQuitKeyDown, history } = newProps;
-    const { quitKeyDown: oldQuitKeyDown } = this.props;
+  componentDidUpdate(oldProps) {
+    const { quitKeyDown: newQuitKeyDown, history } = this.props;
+    const { quitKeyDown: oldQuitKeyDown } = oldProps;
     if (!oldQuitKeyDown && newQuitKeyDown) {
       history.goBack();
     }
@@ -47,17 +47,17 @@ class SongFinder extends React.PureComponent {
       resultList = R.pipe(
         R.take(10),
         R.map((song) => (
-          <div className="song-result"
-               role="button"
-               tabIndex={0}
-               key={song.id}
-               data-song-id={song.id}
-               onClick={this.handleSongSelect}
-               onKeyPress={this.handleKeyPress}>
-            {song.name}
-          </div>
+            <div className="song-result"
+                 role="button"
+                 tabIndex={0}
+                 key={song.id}
+                 data-song-id={song.id}
+                 onClick={this.handleSongSelect}
+                 onKeyPress={this.handleKeyPress}>
+              {song.name}
+            </div>
         )),
-      )(results);
+      )(results.toJS());
     } else if (isFetching) {
       resultList = "... Searching ...";
     }

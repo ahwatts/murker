@@ -23,11 +23,11 @@ export function doFrame(canvas, store, gl, onUpdate, onRender) {
 }
 
 export function startMainLoop(canvas, store, gl, onUpdate, onRender) {
-  const wrappedDoFrame = () => {
+  function wrappedDoFrame() {
     doFrame(canvas, store, gl, onUpdate, onRender);
     requestAnimationFrame(wrappedDoFrame);
-  };
-  wrappedDoFrame();
+  }
+  requestAnimationFrame(wrappedDoFrame);
 }
 
 export default {};

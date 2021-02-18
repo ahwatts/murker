@@ -41,6 +41,7 @@ module.exports = {
       files: ["**/*.jsx"],
       rules: {
         indent: "off",
+        "no-else-return": "off",
       },
     },
   ],

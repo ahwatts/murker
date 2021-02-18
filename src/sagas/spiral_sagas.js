@@ -177,7 +177,9 @@ export function spiral(store, gl) {
 
   return {
     update() {
-      const pipeline = Song.Selectors.getAudioPipeline(store.getState()).toJS();
+      const state = store.getState();
+      const pipelineIm = Song.Selectors.getAudioPipeline(state);
+      const pipeline = pipelineIm.toJS();
       if (pipeline && pipeline.analyzers) {
         mesh.updateTextures(pipeline.analyzers);
       }

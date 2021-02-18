@@ -1,85 +1,39 @@
-/* eslint jsx-a11y/media-has-caption: off */
-
 import PropTypes from "prop-types";
-import React from "react";
+import * as R from "ramda";
+import React, { useEffect, useRef } from "react";
 import { connect } from "react-redux";
 import Song from "../redux/song_redux";
 
-class Player extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      currentSong: null,
-      // status: "stopped",
+/* eslint-disable jsx-a11y/media-has-caption */
+function Player({ currentSong, playSong }) {
+  const audioRef = useRef(null);
+  useEffect(() => {
+    console.log(currentSong);
+    console.log(audioRef);
+    if (!R.isNil(currentSong)) {
+      playSong(currentSong, audioRef.current);
+    }
+    return () => {
+      // Stop playing song here.
     };
-  }
+  }, [currentSong]);
 
-  componentWillReceiveProps(newProps) {
-    const { currentSong: newCurrentSong } = newProps;
-    const { currentSong: oldCurrentSong } = this.state;
-    if (newCurrentSong && oldCurrentSong
-      && newCurrentSong.get("id") !== oldCurrentSong.id) {
-      this.setState({
-        currentSong: newProps.currentSong.toJS(),
-        // status: "playing",
-      }, this.playCurrentSong);
-    } else if (!oldCurrentSong && newCurrentSong) {
-      this.setState({
-        currentSong: newCurrentSong.toJS(),
-        // status: "playing",
-      }, this.playCurrentSong);
-    } else if (oldCurrentSong && !newCurrentSong) {
-      this.setState({
-        currentSong: null,
-        // status: "stopped",
-      });
-    }
-  }
-
-  setAudioRef = (elem) => { this.audio = elem; }
-
-  playCurrentSong = () => {
-    const { playSong } = this.props;
-    const { currentSong } = this.state;
-    playSong(currentSong, this.audio);
-  }
-
-  handleKeyPress = ({ key }) => {
-    if (key === " ") {
-      this.playCurrentSong();
-    }
-  }
-
-  renderButtons() {
+  if (currentSong) {
     return (
-      <span className="icon-play3"
-            aria-label="Play"
-            role="button"
-            tabIndex={0}
-            onClick={this.playCurrentSong}
-            onKeyPress={this.handleKeyPress} />
+      <div id="player-controls">
+        <audio src={currentSong.url}
+               key={currentSong.id}
+               controls={false}
+               crossOrigin="anonymous"
+               ref={audioRef} />
+        {currentSong.name}
+      </div>
     );
-  }
-
-  render() {
-    const { currentSong } = this.state;
-    if (currentSong) {
-      return (
-        <div id="player-controls">
-          <audio src={currentSong.url}
-                 key={currentSong.id}
-                 controls={false}
-                 crossOrigin="anonymous"
-                 ref={this.setAudioRef} />
-          {this.renderButtons()}
-          {currentSong.name}
-        </div>
-      );
-    }
-
+  } else {
     return null;
   }
 }
+/* eslint-enable jsx-a11y/media-has-caption */
 
 Player.propTypes = {
   currentSong: PropTypes.shape({

@@ -1,13 +1,10 @@
-/* eslint indent: off */
-
 import PropTypes from "prop-types";
 import React from "react";
 import { connect } from "react-redux";
-import { HashRouter as Router, Route, Link } from "react-router-dom";
-
+import { HashRouter as Router, Link, Route } from "react-router-dom";
+import RenderContext from "../redux/render_context_redux";
 import FindSong from "./find_song";
 import Player from "./player";
-import RenderContext from "../redux/render_context_redux";
 
 function Murker({ dimensions }) {
   return (
