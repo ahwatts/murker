@@ -1,4 +1,3 @@
-import Immutable from "immutable";
 import PropTypes from "prop-types";
 import * as R from "ramda";
 import React from "react";
@@ -47,15 +46,15 @@ class SongFinder extends React.PureComponent {
       resultList = R.pipe(
         R.take(10),
         R.map((song) => (
-            <div className="song-result"
-                 role="button"
-                 tabIndex={0}
-                 key={song.id}
-                 data-song-id={song.id}
-                 onClick={this.handleSongSelect}
-                 onKeyPress={this.handleKeyPress}>
-              {song.name}
-            </div>
+          <div className="song-result"
+               role="button"
+               tabIndex={0}
+               key={song.id}
+               data-song-id={song.id}
+               onClick={this.handleSongSelect}
+               onKeyPress={this.handleKeyPress}>
+            {song.name}
+          </div>
         )),
       )(results.toJS());
     } else if (isFetching) {

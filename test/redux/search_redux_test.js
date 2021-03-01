@@ -1,8 +1,7 @@
 /* eslint-env mocha */
-/* eslint no-unused-expressions: off, import/no-extraneous-dependencies: off */
+/* eslint no-unused-expressions: off */
 
 import { expect } from "chai";
-
 import Search from "../../src/redux/search_redux";
 
 describe("Search redux", () => {

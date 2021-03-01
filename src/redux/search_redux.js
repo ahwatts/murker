@@ -1,5 +1,5 @@
-import Immutable from "immutable";
 import * as R from "ramda";
+import { createNamespacedSelectors } from "../namespaced_selectors";
 
 const namespace = "findSong";
 
@@ -37,14 +37,14 @@ function rootReducer(state, action) {
     return Reducers.findSongError(state, action);
   default:
     if (R.isNil(state)) {
-      return Immutable.fromJS({
+      return {
         findSong: {
           fetching: false,
           query: "",
           results: [],
           error: null,
         },
-      });
+      };
     }
     return state;
   }

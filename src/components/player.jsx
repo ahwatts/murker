@@ -8,8 +8,8 @@ import Song from "../redux/song_redux";
 function Player({ currentSong, playSong }) {
   const audioRef = useRef(null);
   useEffect(() => {
-    console.log(currentSong);
-    console.log(audioRef);
+    // console.log(currentSong);
+    // console.log(audioRef);
     if (!R.isNil(currentSong)) {
       playSong(currentSong, audioRef.current);
     }

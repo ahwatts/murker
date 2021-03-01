@@ -4510,13 +4510,6 @@ fsevents@~2.3.1:
   languageName: node
   linkType: hard
 
-"immutable@npm:^4.0.0-rc.12":
-  version: 4.0.0-rc.12
-  resolution: "immutable@npm:4.0.0-rc.12"
-  checksum: 8510ebe1cf9ce47b913bc17a72d9fc5cbbe5a121fdd63ac33693e5e47aef27bb3b3e31ca77d6f4928b6a80c41cfcc08f6f928bc1bd06448a1b6df11ee1781c0b
-  languageName: node
-  linkType: hard
-
 "import-fresh@npm:^3.0.0, import-fresh@npm:^3.2.1":
   version: 3.3.0
   resolution: "import-fresh@npm:3.3.0"
@@ -5820,7 +5813,6 @@ fsevents@~2.3.1:
     eslint-plugin-react: ^7.22.0
     eslint-plugin-react-hooks: ^4.2.0
     gl-matrix: ^3.3.0
-    immutable: ^4.0.0-rc.12
     karma: ^6.1.1
     karma-chrome-launcher: ^3.1.0
     karma-firefox-launcher: ^2.1.0
