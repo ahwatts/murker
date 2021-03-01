@@ -1,5 +1,5 @@
-import Immutable from "immutable";
 import * as R from "ramda";
+import { createNamespacedSelectors } from "../namespaced_selectors";
 
 const namespace = "keyPress";
 
@@ -14,8 +14,18 @@ const Actions = {
 };
 
 const Reducers = {
-  keyDown: (state, { key }) => state.merge({ [key]: "down" }),
-  keyUp: (state, { key }) => state.delete(key),
+  keyDown: (state, { key }) => {
+    if (!R.isNil(key)) {
+      return R.set(R.lensProp(key), "down", state);
+    }
+    return state;
+  },
+  keyUp: (state, { key }) => {
+    if (!R.isNil(key)) {
+      return R.set(R.lensProp(key), "up", state);
+    }
+    return state;
+  },
 };
 
 function rootReducer(state, action) {
@@ -26,17 +36,25 @@ function rootReducer(state, action) {
     return Reducers.keyUp(state, action);
   default:
     if (R.isNil(state)) {
-      return Immutable.Map();
+      return {};
     }
     return state;
   }
 }
 
-const Selectors = {
+const NoNsSelectors = {
+  keyState(state, key) {
+    const lens = R.lensProp(key);
+    return R.defaultTo("up", R.view(lens, state));
+  },
+
   isKeyDown(state, key) {
-    return (state[namespace] || Immutable.Map()).get(key);
+    const lens = R.lensProp(key);
+    return R.equals(R.view(lens, state), "down");
   },
 };
+
+const Selectors = createNamespacedSelectors(namespace, NoNsSelectors);
 
 export default {
   Types,

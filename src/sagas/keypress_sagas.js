@@ -26,11 +26,12 @@ export function createKeyPressChannel() {
 export function* watchKeyPresses(channel) {
   while (true) {
     const keyEvent = yield take(channel);
-    // console.log(keyEvent);
-    if (keyEvent.type === "keydown") {
-      yield put(KeyPress.Actions.keyDown(keyEvent.key));
-    } else if (keyEvent.type === "keyup") {
-      yield put(KeyPress.Actions.keyUp(keyEvent.key));
+    console.log(keyEvent);
+    const { type, code } = keyEvent;
+    if (type === "keydown") {
+      yield put(KeyPress.Actions.keyDown(code));
+    } else if (type === "keyup") {
+      yield put(KeyPress.Actions.keyUp(code));
     }
   }
 }
