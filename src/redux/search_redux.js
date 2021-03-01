@@ -1,7 +1,8 @@
 import * as R from "ramda";
+import { combineReducers } from "redux";
 import { createNamespacedSelectors } from "../namespaced_selectors";
 
-const namespace = "findSong";
+const namespace = "search";
 
 const Types = R.indexBy(R.identity, [
   "FIND_SONG_QUERY",
@@ -16,18 +17,21 @@ const Actions = {
 };
 
 const Reducers = {
-  findSongQuery: (state, { query }) => state.update("findSong", (state2) => (
-    state2.merge({ fetching: true, query })
-  )),
-  findSongResults: (state, { results }) => state.update("findSong", (state2) => (
-    state2.merge({ fetching: false, results })
-  )),
-  findSongError: (state, { error }) => state.update("findSong", (state2) => (
-    state2.merge({ fetching: false, results: [], error })
-  )),
+  findSongQuery: (state, { query }) => R.mergeLeft(
+    { fetching: true, query, error: null },
+    state,
+  ),
+  findSongResults: (state, { results }) => R.mergeLeft(
+    { fetching: false, results, error: null },
+    state,
+  ),
+  findSongError: (state, { error }) => R.mergeLeft(
+    { fetching: false, results: [], error },
+    state,
+  ),
 };
 
-function rootReducer(state, action) {
+function findSongReducer(state, action) {
   switch (action.type) {
   case Types.FIND_SONG_QUERY:
     return Reducers.findSongQuery(state, action);
@@ -38,35 +42,28 @@ function rootReducer(state, action) {
   default:
     if (R.isNil(state)) {
       return {
-        findSong: {
-          fetching: false,
-          query: "",
-          results: [],
-          error: null,
-        },
+        fetching: false,
+        query: "",
+        results: [],
+        error: null,
       };
     }
     return state;
   }
 }
 
-const Selectors = {
-  getQuery(state) {
-    return state[namespace].getIn(["findSong", "query"]);
-  },
+const rootReducer = combineReducers({
+  findSong: findSongReducer,
+});
 
-  isFetching(state) {
-    return state[namespace].getIn(["findSong", "fetching"]);
-  },
-
-  getResults(state) {
-    return state[namespace].getIn(["findSong", "results"]);
-  },
-
-  getError(state) {
-    return state[namespace].getIn(["findSong", "error"]);
-  },
+const NoNsSelectors = {
+  getQuery: R.path(["findSong", "query"]),
+  isFetching: R.path(["findSong", "fetching"]),
+  getResults: R.path(["findSong", "results"]),
+  getError: R.path(["findSong", "error"]),
 };
+
+const Selectors = createNamespacedSelectors(namespace, NoNsSelectors);
 
 export default {
   Types,
