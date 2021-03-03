@@ -16,7 +16,7 @@ module.exports = function (config) {
       "karma-mocha-reporter",
       "karma-webpack",
     ],
-    frameworks: ["mocha"],
+    frameworks: ["mocha", "webpack"],
     files: [
       "test/*_test.js",
       "test/**/*_test.js",

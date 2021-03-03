@@ -138,4 +138,97 @@ describe("Search redux", () => {
       expect(Search.Selectors.getQuery(state)).to.equal("foo");
     });
   });
+
+  context("isFetching selector", () => {
+    it("should initially be false", () => {
+      const state = createInitialNsState();
+      expect(Search.Selectors.isFetching(state)).to.be.false;
+    });
+
+    it("should be true after a query has been submitted", () => {
+      let state = createInitialNsState();
+      state = nsReducer(state, Search.Actions.findSongQuery("foo"));
+      expect(Search.Selectors.isFetching(state)).to.be.true;
+    });
+
+    it("should be false after results have come back", () => {
+      let state = createInitialNsState();
+      state = nsReducer(state, Search.Actions.findSongQuery("foo"));
+      state = nsReducer(state, Search.Actions.findSongResults(["song 1", "song 2"]));
+      expect(Search.Selectors.isFetching(state)).to.be.false;
+    });
+
+    it("should be false if an error comes back", () => {
+      let state = createInitialNsState();
+      state = nsReducer(state, Search.Actions.findSongQuery("foo"));
+      state = nsReducer(state, Search.Actions.findSongError("Failed to find songs"));
+      expect(Search.Selectors.isFetching(state)).to.be.false;
+    });
+  });
+
+  context("getResults selector", () => {
+    it("should initially be empty", () => {
+      const state = createInitialNsState();
+      expect(R.isEmpty(Search.Selectors.getResults(state))).to.true;
+    });
+
+    it("should have the results after they have come back", () => {
+      let state = createInitialNsState();
+      state = nsReducer(state, Search.Actions.findSongQuery("foo"));
+      state = nsReducer(state, Search.Actions.findSongResults(["song 1", "song 2"]));
+      expect(Search.Selectors.getResults(state)).to.deep.equal(["song 1", "song 2"]);
+    });
+
+    it("should have no results if an error comes back", () => {
+      let state = createInitialNsState();
+      state = nsReducer(state, Search.Actions.findSongQuery("foo"));
+      state = nsReducer(state, Search.Actions.findSongError("Failed to find songs"));
+      expect(R.isEmpty(Search.Selectors.getResults(state))).to.be.true;
+    });
+
+    it("should still have the old results if a new query is issued", () => {
+      let state = createInitialNsState();
+      state = nsReducer(state, Search.Actions.findSongQuery("foo"));
+      state = nsReducer(state, Search.Actions.findSongResults(["song 1", "song 2"]));
+      state = nsReducer(state, Search.Actions.findSongQuery("bar"));
+      expect(Search.Selectors.getResults(state)).to.deep.equal(["song 1", "song 2"]);
+    });
+  });
+
+  context("getError selector", () => {
+    it("should initially be null", () => {
+      const state = createInitialNsState();
+      expect(Search.Selectors.getError(state)).to.be.null;
+    });
+
+    it("should be null after results come back", () => {
+      let state = createInitialNsState();
+      state = nsReducer(state, Search.Actions.findSongQuery("foo"));
+      state = nsReducer(state, Search.Actions.findSongResults(["song 1", "song 2"]));
+      expect(Search.Selectors.getError(state)).to.be.null;
+    });
+
+    it("should have the error if an error comes back", () => {
+      let state = createInitialNsState();
+      state = nsReducer(state, Search.Actions.findSongQuery("foo"));
+      state = nsReducer(state, Search.Actions.findSongError("Failed to find songs"));
+      expect(Search.Selectors.getError(state)).to.equal("Failed to find songs");
+    });
+
+    it("should clear the error if a new query is issued", () => {
+      let state = createInitialNsState();
+      state = nsReducer(state, Search.Actions.findSongQuery("foo"));
+      state = nsReducer(state, Search.Actions.findSongError("Failed to find songs"));
+      state = nsReducer(state, Search.Actions.findSongQuery("bar"));
+      expect(Search.Selectors.getError(state)).to.be.null;
+    });
+
+    it("should clear the error if results come back", () => {
+      let state = createInitialNsState();
+      state = nsReducer(state, Search.Actions.findSongQuery("foo"));
+      state = nsReducer(state, Search.Actions.findSongError("Failed to find songs"));
+      state = nsReducer(state, Search.Actions.findSongResults(["song 1", "song 2"]));
+      expect(Search.Selectors.getError(state)).to.be.null;
+    });
+  });
 });

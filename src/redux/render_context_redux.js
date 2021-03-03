@@ -1,4 +1,5 @@
 import * as R from "ramda";
+import { createNamespacedSelectors } from "../namespaced_selectors";
 
 const namespace = "renderContext";
 
@@ -19,11 +20,11 @@ const Actions = {
 };
 
 const Reducers = {
-  createCanvas: (state, { canvas }) => state.merge({ canvas }),
-  createOpenGLContext: (state, { gl }) => state.merge({ gl }),
-  createOpenGLExtension: (state, { name, ext }) => state.merge({ [name]: ext }),
-  resizeCanvas: (state, { width, height }) => state.merge({ width, height, resize: true }),
-  resizeCompleted: (state) => state.set("resize", false),
+  createCanvas: (state, { canvas }) => R.assoc("canvas", canvas, state),
+  createOpenGLContext: (state, { gl }) => R.assoc("gl", gl, state),
+  createOpenGLExtension: (state, { name, ext }) => R.assoc(name, ext, state),
+  resizeCanvas: (state, { width, height }) => R.mergeLeft({ width, height, resize: true }, state),
+  resizeCompleted: (state) => R.assoc("resize", false, state),
 };
 
 function rootReducer(state, action) {
@@ -40,41 +41,26 @@ function rootReducer(state, action) {
     return Reducers.resizeCompleted(state, action);
   default:
     if (R.isNil(state)) {
-      return Immutable.fromJS({
+      return {
         canvas: null,
         gl: null,
         width: 100,
         height: 100,
         resize: false,
-      });
+      };
     }
     return state;
   }
 }
 
-const Selectors = {
-  getGlContext(state) {
-    return state[namespace].get("gl");
-  },
-
-  getGlExtension(state, name) {
-    return state[namespace].get(name);
-  },
-
-  getCanvas(state) {
-    return state[namespace].get("canvas");
-  },
-
-  getDimensions(state) {
-    const width = state[namespace].get("width");
-    const height = state[namespace].get("height");
-    return { width, height };
-  },
-
-  isResizing(state) {
-    return state[namespace].get("resize");
-  },
+const NoNsSelectors = {
+  getCanvas: R.prop("canvas"),
+  getDimensions: R.pick(["width", "height"]),
+  getGlContext: R.prop("gl"),
+  getGlExtension: R.pipe(R.flip(R.prop), R.defaultTo(null)),
+  isResizing: R.prop("resize"),
 };
+const Selectors = createNamespacedSelectors(namespace, NoNsSelectors);
 
 export default {
   Types,
