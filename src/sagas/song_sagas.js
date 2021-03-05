@@ -1,6 +1,6 @@
 import * as R from "ramda";
 import { call, put, select } from "redux-saga/effects";
-import FindSong from "../redux/search_redux";
+import Search from "../redux/search_redux";
 import Song from "../redux/song_redux";
 import { isBlank } from "../utils";
 
@@ -29,14 +29,14 @@ export function* findSong(api, { query }) {
       const response = yield call([api, "findSong"], query);
       if (response.ok) {
         const body = yield call([response, "json"]);
-        yield put(FindSong.Actions.findSongResults(Immutable.fromJS(body.results)));
+        yield put(Search.Actions.findSongResults(body.results));
       } else {
         const error = R.path(["error", "message"], response.json());
-        yield put(FindSong.Actions.findSongError(error));
+        yield put(Search.Actions.findSongError(error));
       }
     }
   } catch (e) {
-    yield put(FindSong.Actions.findSongError(e.toString()));
+    yield put(Search.Actions.findSongError(e.toString()));
   }
 }
 
@@ -45,7 +45,7 @@ export function* playSong({ audio }) {
   // merger node from the context's destination, the rest of the
   // previous pipeline pipeline should get gc'd once the new pipeline
   // is stored to the redux.
-  const oldPipeline = (yield select(Song.Selectors.getAudioPipeline)).toJS();
+  const oldPipeline = yield select(Song.Selectors.getAudioPipeline);
   if (!isBlank(oldPipeline)) {
     oldPipeline.merger.disconnect();
   }
@@ -66,9 +66,9 @@ export function* playSong({ audio }) {
   merger.connect(context.destination);
   audio.play();
 
-  yield put(Song.Actions.setAudioPipeline(Immutable.fromJS({
+  yield put(Song.Actions.setAudioPipeline({
     context, source, splitter, merger, analyzers,
-  })));
+  }));
 }
 
 export default {};

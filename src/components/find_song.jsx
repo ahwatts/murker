@@ -25,7 +25,7 @@ class SongFinder extends React.PureComponent {
   handleSongSelect = (event) => {
     const { results, playSong, history } = this.props;
     const songId = parseInt(event.currentTarget.dataset.songId, 10);
-    const song = results.find((s) => s.get("id") === songId);
+    const song = results.find((s) => s.id === songId);
     if (song) {
       playSong(song);
       history.goBack();
@@ -56,7 +56,8 @@ class SongFinder extends React.PureComponent {
             {song.name}
           </div>
         )),
-      )(results.toJS());
+
+        )(results);
     } else if (isFetching) {
       resultList = "... Searching ...";
     }
@@ -80,8 +81,12 @@ SongFinder.propTypes = {
   isFetching: PropTypes.bool.isRequired,
   playSong: PropTypes.func.isRequired,
   query: PropTypes.string.isRequired,
-  quitKeyDown: PropTypes.string,
-  results: PropTypes.instanceOf(Immutable.List).isRequired,
+  quitKeyDown: PropTypes.bool,
+  results: PropTypes.arrayOf(PropTypes.shape({
+    id: PropTypes.number.isRequired,
+    name: PropTypes.string.isRequired,
+    url: PropTypes.string.isRequired,
+  })).isRequired,
   setQuery: PropTypes.func.isRequired,
 };
 
@@ -106,3 +111,4 @@ function mapDispatchToProps(dispatch) {
 }
 
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(SongFinder));
+

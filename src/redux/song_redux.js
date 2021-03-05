@@ -1,4 +1,5 @@
 import * as R from "ramda";
+import { createNamespacedSelectors } from "../namespaced_selectors";
 
 const namespace = "song";
 
@@ -15,8 +16,8 @@ const Actions = {
 };
 
 const Reducers = {
-  setAudioPipeline: (state, { nodes }) => state.merge({ pipeline: nodes }),
-  setNowPlayingSong: (state, { song }) => state.merge({ nowPlaying: song }),
+  setAudioPipeline: (state, { nodes }) => R.assoc("pipeline", nodes, state),
+  setNowPlayingSong: (state, { song }) => R.assoc("nowPlaying", song, state),
 };
 
 function rootReducer(state, action) {
@@ -27,23 +28,21 @@ function rootReducer(state, action) {
     return Reducers.setNowPlayingSong(state, action);
   default:
     if (R.isNil(state)) {
-      return Immutable.fromJS({
+      return {
         pipeline: {},
         nowPlaying: null,
-      });
+      };
     }
     return state;
   }
 }
 
-const Selectors = {
-  getAudioPipeline(state) {
-    return state[namespace].get("pipeline");
-  },
-  getNowPlayingSong(state) {
-    return state[namespace].get("nowPlaying");
-  },
+const NoNsSelectors = {
+  getAudioPipeline: R.prop("pipeline"),
+  getNowPlayingSong: R.prop("nowPlaying"),
 };
+
+const Selectors = createNamespacedSelectors(namespace, NoNsSelectors);
 
 export default {
   Types,
