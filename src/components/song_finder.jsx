@@ -13,19 +13,19 @@ function escapeSelector(state) {
 
 export default function SongFinder() {
   const dispatch = useDispatch();
-  const history = useHistory();
 
   const query = useSelector(Search.Selectors.getQuery);
   function handleQueryChange(event) {
     dispatch(Search.Actions.findSongQuery(event.target.value));
   }
 
+  const history = useHistory();
   const quitKeyDown = useSelector(escapeSelector);
   useEffect(() => {
     if (quitKeyDown) {
-      history.goBack();
+      history.push("/");
     }
-  }, [history, quitKeyDown]);
+  }, [quitKeyDown]);
 
   const results = useSelector(Search.Selectors.getResults);
   const isFetching = useSelector(Search.Selectors.isFetching);
@@ -35,7 +35,7 @@ export default function SongFinder() {
     const song = results.find((s) => s.id === songId);
     if (song) {
       dispatch(Song.Actions.setNowPlayingSong(song));
-      history.goBack();
+      history.push("/");
     }
   }
 

@@ -1,12 +1,12 @@
-import PropTypes from "prop-types";
 import React from "react";
-import { connect } from "react-redux";
+import { useSelector } from "react-redux";
 import { HashRouter as Router, Link, Route } from "react-router-dom";
 import RenderContext from "../redux/render_context_redux";
 import SongFinder from "./song_finder";
 import Player from "./player";
 
-function Murker({ dimensions }) {
+export default function Murker() {
+  const dimensions = useSelector(RenderContext.Selectors.getDimensions);
   return (
     <Router>
       <div id="murker-root" style={dimensions}>
@@ -26,18 +26,3 @@ function Murker({ dimensions }) {
     </Router>
   );
 }
-
-Murker.propTypes = {
-  dimensions: PropTypes.shape({
-    width: PropTypes.number,
-    height: PropTypes.number,
-  }).isRequired,
-};
-
-function mapStateToProps(state) {
-  return {
-    dimensions: RenderContext.Selectors.getDimensions(state),
-  };
-}
-
-export default connect(mapStateToProps)(Murker);

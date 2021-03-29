@@ -1,22 +1,24 @@
-import PropTypes from "prop-types";
 import * as R from "ramda";
 import React, { useEffect, useRef } from "react";
-import { connect } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import Song from "../redux/song_redux";
 
 /* eslint-disable jsx-a11y/media-has-caption */
-function Player({ currentSong, playSong }) {
+export default function Player() {
+  const dispatch = useDispatch();
+  const currentSong = useSelector(Song.Selectors.getNowPlayingSong);
+
   const audioRef = useRef(null);
   useEffect(() => {
     // console.log(currentSong);
     // console.log(audioRef);
     if (!R.isNil(currentSong)) {
-      playSong(currentSong, audioRef.current);
+      dispatch(Song.Actions.playSong(currentSong, audioRef.current));
     }
     return () => {
       // Stop playing song here.
     };
-  }, [currentSong]);
+  }, [audioRef, currentSong, dispatch]);
 
   if (currentSong) {
     return (
@@ -34,28 +36,3 @@ function Player({ currentSong, playSong }) {
   }
 }
 /* eslint-enable jsx-a11y/media-has-caption */
-
-Player.propTypes = {
-  currentSong: PropTypes.shape({
-    name: PropTypes.string,
-  }),
-  playSong: PropTypes.func.isRequired,
-};
-
-Player.defaultProps = {
-  currentSong: null,
-};
-
-function mapStateToProps(state) {
-  return {
-    currentSong: Song.Selectors.getNowPlayingSong(state),
-  };
-}
-
-function mapDispatchToProps(dispatch) {
-  return {
-    playSong: (song, audio) => dispatch(Song.Actions.playSong(song, audio)),
-  };
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(Player);
